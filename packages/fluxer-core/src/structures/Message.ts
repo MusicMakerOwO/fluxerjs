@@ -3,8 +3,15 @@ import { Base } from './Base.js';
 import { Collection } from '@fluxerjs/collection';
 import type { APIMessage, APIMessageAttachment, APIEmbed } from '@fluxerjs/types';
 import { Routes } from '@fluxerjs/types';
+import { EmbedBuilder } from '@fluxerjs/builders';
 import { User } from './User.js';
 import type { Channel } from './Channel.js';
+
+/** Options for editing a message (content and/or embeds). */
+export interface MessageEditOptions {
+  content?: string;
+  embeds?: (APIEmbed | EmbedBuilder)[];
+}
 
 export class Message extends Base {
   readonly client: Client;
@@ -42,8 +49,13 @@ export class Message extends Base {
     return new Message(this.client, data as APIMessage);
   }
 
-  async edit(options: { content?: string }): Promise<Message> {
-    const data = await this.client.rest.patch(Routes.channelMessage(this.channelId, this.id), { body: options });
+  async edit(options: MessageEditOptions): Promise<Message> {
+    const body: { content?: string; embeds?: APIEmbed[] } = {};
+    if (options.content !== undefined) body.content = options.content;
+    if (options.embeds?.length) {
+      body.embeds = options.embeds.map((e) => (e instanceof EmbedBuilder ? e.toJSON() : e));
+    }
+    const data = await this.client.rest.patch(Routes.channelMessage(this.channelId, this.id), { body });
     return new Message(this.client, data as APIMessage);
   }
 

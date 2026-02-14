@@ -95,6 +95,73 @@ await client.login(process.env.FLUXER_BOT_TOKEN);`,
     ],
   },
   {
+    id: 'editing-embeds',
+    slug: 'editing-embeds',
+    title: 'Editing Embeds',
+    description: 'Edit existing message embeds with message.edit().',
+    category: 'sending-messages',
+    sections: [
+      {
+        title: 'Overview',
+        description:
+          'The Fluxer API supports editing existing messages via PATCH. You can update the message content, embeds, or both. Only the message author (or admins with proper permissions) can edit messages.',
+      },
+      {
+        title: 'Edit Content',
+        description: 'Update the text content of a message you sent.',
+        code: `const reply = await message.reply('Initial message');
+await reply.edit({ content: 'Updated message!' });`,
+        language: 'javascript',
+      },
+      {
+        title: 'Edit Embeds',
+        description: 'Replace or update embeds on an existing message. Pass an array of EmbedBuilder instances or APIEmbed objects.',
+        code: `import { Client, Events, EmbedBuilder } from '@fluxerjs/core';
+
+const client = new Client({ intents: 0 });
+
+client.on(Events.MessageCreate, async (message) => {
+  if (message.content === '!editembed') {
+    const embed = new EmbedBuilder()
+      .setTitle('Loading...')
+      .setColor(0x5865f2)
+      .setTimestamp();
+
+    const reply = await message.reply({ embeds: [embed.toJSON()] });
+
+    // Simulate loading, then update the embed
+    await new Promise((r) => setTimeout(r, 2000));
+
+    const updatedEmbed = new EmbedBuilder()
+      .setTitle('Done!')
+      .setDescription('This embed was edited after 2 seconds.')
+      .setColor(0x57f287)
+      .setTimestamp();
+
+    await reply.edit({ embeds: [updatedEmbed] });
+  }
+});
+
+await client.login(process.env.FLUXER_BOT_TOKEN);`,
+        language: 'javascript',
+      },
+      {
+        title: 'Edit Content and Embeds Together',
+        description: 'You can update both content and embeds in a single edit call.',
+        code: `await message.edit({
+  content: 'Updated text',
+  embeds: [new EmbedBuilder().setTitle('Updated embed').setColor(0x5865f2).toJSON()],
+});`,
+        language: 'javascript',
+      },
+      {
+        title: 'API Reference',
+        description:
+          'The edit endpoint is PATCH /channels/{channel_id}/messages/{message_id}. See openapi.json for the full request body schema. The SDK Message.edit() accepts { content?: string; embeds?: (APIEmbed | EmbedBuilder)[] }.',
+      },
+    ],
+  },
+  {
     id: 'webhooks',
     slug: 'webhooks',
     title: 'Webhooks',

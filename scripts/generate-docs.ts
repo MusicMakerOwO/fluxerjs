@@ -29,9 +29,9 @@ const DOCS_DIR = resolve(root, 'apps/docs/public/docs');
 function getVersion(): string {
   try {
     const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf-8'));
-    return pkg.version ?? '1.0.5';
+    return pkg.version ?? '1.0.6';
   } catch {
-    return '1.0.5';
+    return '1.0.6';
   }
 }
 
@@ -106,7 +106,7 @@ async function main(): Promise<void> {
 
   const jsonStr = JSON.stringify(combined, null, 2);
 
-  // Write to versioned path: docs/v1.0.5/main.json (separate file per version)
+  // Write to versioned path: docs/v1.0.6/main.json (separate file per version)
   const versionedDir = resolve(DOCS_DIR, `v${version}`);
   mkdirSync(versionedDir, { recursive: true });
   const versionedFile = resolve(versionedDir, 'main.json');

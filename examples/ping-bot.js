@@ -312,6 +312,36 @@ commands.set('roleinfo', {
   },
 });
 
+commands.set('editembed', {
+  description: 'Demonstrate editing an existing message embed',
+  async execute(message) {
+    const embed = new EmbedBuilder()
+      .setTitle('Original Embed')
+      .setDescription('This embed will be edited in 2 seconds...')
+      .setColor(BRAND_COLOR)
+      .setFooter({ text: 'Editing embeds demo' })
+      .setTimestamp();
+
+    const reply = await message.reply({ embeds: [embed.toJSON()] });
+
+    // Wait 2 seconds, then edit the embed
+    await new Promise((r) => setTimeout(r, 2000));
+
+    const updatedEmbed = new EmbedBuilder()
+      .setTitle('Edited Embed')
+      .setDescription('The Fluxer API supports editing message embeds via `message.edit({ embeds: [...] })`.')
+      .setColor(0x57f287)
+      .addFields(
+        { name: 'Original', value: 'First state', inline: true },
+        { name: 'Edited', value: 'Updated state', inline: true },
+      )
+      .setFooter({ text: 'Embed was successfully edited' })
+      .setTimestamp();
+
+    await reply.edit({ embeds: [updatedEmbed] });
+  },
+});
+
 commands.set('help', {
   description: 'List available commands',
   async execute(message) {

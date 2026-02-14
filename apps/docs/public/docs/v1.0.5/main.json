@@ -2,7 +2,7 @@
   "meta": {
     "generator": "fluxer-docgen",
     "version": "1",
-    "date": 1771086666409
+    "date": 1771087824543
   },
   "package": "@fluxerjs/core",
   "version": "1.0.5",
@@ -1950,7 +1950,7 @@
           "async": true,
           "source": {
             "file": "Message.ts",
-            "line": 50
+            "line": 62
           }
         },
         {
@@ -1958,7 +1958,7 @@
           "params": [
             {
               "name": "options",
-              "type": "{ content?: string; }",
+              "type": "MessageEditOptions",
               "optional": false
             }
           ],
@@ -1966,7 +1966,7 @@
           "async": true,
           "source": {
             "file": "Message.ts",
-            "line": 45
+            "line": 52
           }
         },
         {
@@ -1982,13 +1982,13 @@
           "async": true,
           "source": {
             "file": "Message.ts",
-            "line": 37
+            "line": 44
           }
         }
       ],
       "source": {
         "file": "Message.ts",
-        "line": 9,
+        "line": 16,
         "path": "packages/fluxer-core/src/structures/Message.ts"
       },
       "package": "@fluxerjs/core"
@@ -6819,6 +6819,30 @@
         "path": "packages/voice/src/LiveKitRtcConnection.ts"
       },
       "package": "@fluxerjs/voice"
+    },
+    {
+      "name": "MessageEditOptions",
+      "description": "Options for editing a message (content and/or embeds).",
+      "properties": [
+        {
+          "name": "content",
+          "type": "string",
+          "readonly": false,
+          "optional": true
+        },
+        {
+          "name": "embeds",
+          "type": "(APIEmbed | EmbedBuilder)[]",
+          "readonly": false,
+          "optional": true
+        }
+      ],
+      "source": {
+        "file": "Message.ts",
+        "line": 11,
+        "path": "packages/fluxer-core/src/structures/Message.ts"
+      },
+      "package": "@fluxerjs/core"
     },
     {
       "name": "MessageFlagsResolvable",

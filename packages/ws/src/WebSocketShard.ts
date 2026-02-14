@@ -217,7 +217,6 @@ export class WebSocketShard extends EventEmitter {
         },  
       };
       if (this.options.presence) identify.presence = this.options.presence;
-      console.log('[ws] sending identify payload:', JSON.stringify({ op: 2, d: { ...identify, token: identify.token ? '[REDACTED]' : identify.token } }, null, 2));
       this.send({ op: GatewayOpcodes.Identify, d: identify });
     }
   }
