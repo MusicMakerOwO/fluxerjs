@@ -656,6 +656,67 @@ flags: MessageAttachmentFlags.IS_SPOILER | MessageAttachmentFlags.IS_ANIMATED`,
     ],
   },
   {
+    id: 'attachments-by-url',
+    slug: 'attachments-by-url',
+    title: 'File Attachments by URL',
+    description:
+      'Attach files by passing a URL instead of buffer data. The SDK fetches the URL and uploads it as a normal attachment.',
+    category: 'media',
+    sections: [
+      {
+        title: 'Using a URL',
+        description:
+          'Pass { name, url } in the files array. The SDK fetches the URL (30s timeout), validates it with URL.canParse(), and uploads the result. Works with channel.send(), message.reply(), message.send(), webhook.send(), and client.channels.send().',
+        code: `import { Client, Events } from '@fluxerjs/core';
+
+const client = new Client({ intents: 0 });
+
+client.on(Events.MessageCreate, async (message) => {
+  if (message.content === '!attachurl') {
+    await message.reply({
+      content: 'Image from URL:',
+      files: [
+        {
+          name: 'image.png',
+          url: 'https://example.com/image.png',
+        },
+      ],
+    });
+  }
+});
+
+await client.login(process.env.FLUXER_BOT_TOKEN);`,
+        language: 'javascript',
+      },
+      {
+        title: 'Mixing buffers and URLs',
+        description:
+          'You can combine file data and URLs in the same message. Order is preserved; attachments metadata id matches the file index.',
+        code: `await message.reply({
+  content: 'Two files:',
+  files: [
+    { name: 'local.txt', data: Buffer.from('Hello') },
+    { name: 'remote.png', url: 'https://example.com/logo.png' },
+  ],
+});`,
+        language: 'javascript',
+      },
+      {
+        title: 'Optional filename override',
+        description:
+          'Use filename to control the displayed attachment name independently from the local name used during upload.',
+        code: `files: [
+  {
+    name: 'fetched-image.png',
+    url: 'https://example.com/image.jpg',
+    filename: 'custom-display.png',
+  },
+]`,
+        language: 'javascript',
+      },
+    ],
+  },
+  {
     id: 'profile-urls',
     slug: 'profile-urls',
     title: 'Profile URLs',
@@ -1188,11 +1249,11 @@ await client.login(process.env.FLUXER_BOT_TOKEN);`,
     ],
   },
   {
-    id: 'permissions-moderation',
-    slug: 'permissions-moderation',
-    title: 'Permissions & Moderation',
+    id: 'permissions',
+    slug: 'permissions',
+    title: 'Permissions',
     description:
-      'Check member permissions (including guild owner override), use PermissionFlags, and implement ban/kick/unban commands.',
+      'Check member permissions (guild-level and channel-specific), bot permissions via guild.members.me, owner override, and PermissionFlags.',
     category: 'other',
     sections: [
       {
@@ -1208,7 +1269,7 @@ await client.login(process.env.FLUXER_BOT_TOKEN);`,
 
 const client = new Client({ intents: 0 });
 
-async function getModeratorPerms(message) {
+async function getMemberPerms(message) {
   const guild = message.guild ?? await message.client.guilds.fetch(message.guildId);
   if (!guild) return null;
   const member = guild.members.get(message.author.id) ?? await guild.fetchMember(message.author.id);
@@ -1216,10 +1277,9 @@ async function getModeratorPerms(message) {
 }
 
 client.on(Events.MessageCreate, async (message) => {
-  const perms = await getModeratorPerms(message);
+  const perms = await getMemberPerms(message);
   if (!perms) return;
 
-  // Server owner always has all permissions
   if (perms.has(PermissionFlags.BanMembers)) {
     await message.reply('You can ban members.');
   }
@@ -1271,14 +1331,14 @@ if (channel?.isSendable?.()) {
       {
         title: 'Managing roles',
         description:
-          'Create, fetch, edit, and delete roles with guild.createRole(), guild.fetchRoles(), guild.fetchRole(roleId), role.edit(), and role.delete(). Use resolvePermissionsToBitfield() for permission bitfields when creating or editing. See the Roles guide for full examples.',
+          'Create, fetch, edit, and delete roles with guild.createRole(), guild.fetchRoles(), guild.fetchRole(roleId), role.edit(), and role.delete(). Use resolvePermissionsToBitfield() for permission bitfields. See the Roles guide for full examples.',
         code: `// Create a role with specific permissions
 const role = await guild.createRole({
   name: 'Mod',
   permissions: ['KickMembers', 'BanMembers', 'ManageMessages'],
 });
 
-// Add/remove roles from members (Guild.addRoleToMember / removeRoleFromMember)
+// Add/remove roles from members
 await guild.addRoleToMember(userId, roleId);
 await guild.removeRoleFromMember(userId, roleId);`,
         language: 'javascript',
@@ -1299,11 +1359,59 @@ const names = Object.keys(PermissionFlags).filter((name) =>
 await message.reply(\`Your permissions: \${names.join(', ')}\`);`,
         language: 'javascript',
       },
+    ],
+  },
+  {
+    id: 'moderation',
+    slug: 'moderation',
+    title: 'Moderation',
+    description:
+      'Implement ban, kick, and unban commands. Check permissions first (see Permissions guide).',
+    category: 'other',
+    sections: [
       {
-        title: 'Moderation example',
+        title: 'Overview',
         description:
-          'See examples/moderation-bot.js for a full bot with !ban, !kick, !unban, and !perms commands.',
-        code: `import { Client, Events, PermissionFlags, EmbedBuilder, FluxerError, ErrorCodes } from '@fluxerjs/core';
+          'Use guild.ban(), guild.kick(), and guild.unban() for moderation. Always check member permissions before allowing moderation commands—see the Permissions guide.',
+      },
+      {
+        title: 'Ban a member',
+        description:
+          'guild.ban(userId, options) bans a user. Pass reason for the audit log. Requires BanMembers permission.',
+        code: `const userId = target?.match(/^<@!?(\\d+)>$/)?.[1] ?? target;
+if (userId) {
+  await guild.ban(userId, { reason: rest.join(' ') || undefined });
+  await message.reply(\`Banned <@\${userId}>.\`);
+}`,
+        language: 'javascript',
+      },
+      {
+        title: 'Kick a member',
+        description:
+          'guild.kick(userId, options) kicks a user from the guild. Pass reason for the audit log. Requires KickMembers permission.',
+        code: `const userId = target?.match(/^<@!?(\\d+)>$/)?.[1] ?? target;
+if (userId) {
+  await guild.kick(userId, { reason: rest.join(' ') || undefined });
+  await message.reply(\`Kicked <@\${userId}>.\`);
+}`,
+        language: 'javascript',
+      },
+      {
+        title: 'Unban a user',
+        description:
+          'guild.unban(userId, reason?) removes a ban. Requires BanMembers permission.',
+        code: `const userId = target?.match(/^<@!?(\\d+)>$/)?.[1] ?? target;
+if (userId) {
+  await guild.unban(userId, rest.join(' ') || undefined);
+  await message.reply(\`Unbanned <@\${userId}>.\`);
+}`,
+        language: 'javascript',
+      },
+      {
+        title: 'Full moderation example',
+        description:
+          'See examples/moderation-bot.js for a complete bot with !ban, !kick, !unban, and !perms commands.',
+        code: `import { Client, Events, PermissionFlags } from '@fluxerjs/core';
 
 const PREFIX = '!';
 const client = new Client({ intents: 0 });
@@ -1320,10 +1428,7 @@ client.on(Events.MessageCreate, async (message) => {
   if (message.author.bot || !message.content?.startsWith(PREFIX)) return;
   const [cmd, target, ...rest] = message.content.slice(PREFIX.length).trim().split(/\\s+/);
   const perms = await getModeratorPerms(message);
-  if (!perms) {
-    await message.reply('Could not load your member data.');
-    return;
-  }
+  if (!perms) return;
 
   const guild = message.guild ?? await message.client.guilds.fetch(message.guildId);
   if (!guild) return;
@@ -1510,6 +1615,30 @@ const CATEGORY_LABELS: Record<string, string> = {
   events: 'Events',
   other: 'Other',
 };
+
+/** Category order for guides index (Getting Started first, etc). */
+export const CATEGORY_ORDER: string[] = [
+  'getting-started',
+  'sending-messages',
+  'media',
+  'webhooks',
+  'voice',
+  'events',
+  'other',
+];
+
+/** Slugs of guides to show as quick links on the guides index. */
+export const QUICK_LINK_SLUGS: string[] = [
+  'installation',
+  'basic-bot',
+  'sending-without-reply',
+  'embeds',
+  'attachments',
+  'attachments-by-url',
+  'permissions',
+  'moderation',
+  'slash-commands',
+];
 
 export function getCategoryLabel(cat?: string): string {
   return (cat && CATEGORY_LABELS[cat]) ?? 'Guides';

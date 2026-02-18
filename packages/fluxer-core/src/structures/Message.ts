@@ -17,7 +17,7 @@ import type { User } from './User.js';
 import type { Channel } from './Channel.js';
 import type { Guild } from './Guild.js';
 
-import { buildSendBody, type MessageSendOptions } from '../util/messageUtils.js';
+import { buildSendBody, resolveMessageFiles, type MessageSendOptions } from '../util/messageUtils.js';
 import { ReactionCollector } from '../util/ReactionCollector.js';
 import type { ReactionCollectorOptions } from '../util/ReactionCollector.js';
 
@@ -118,7 +118,8 @@ export class Message extends Base {
   async send(options: MessageSendOptions): Promise<Message> {
     const opts = typeof options === 'string' ? { content: options } : options;
     const body = buildSendBody(options);
-    const postOptions = opts.files?.length ? { body, files: opts.files } : { body };
+    const files = opts.files?.length ? await resolveMessageFiles(opts.files) : undefined;
+    const postOptions = files?.length ? { body, files } : { body };
     const data = await this.client.rest.post(Routes.channelMessages(this.channelId), postOptions);
     return new Message(this.client, data as APIMessage);
   }
@@ -150,7 +151,8 @@ export class Message extends Base {
         guild_id: this.guildId ?? undefined,
       },
     };
-    const postOptions = opts.files?.length ? { body, files: opts.files } : { body };
+    const files = opts.files?.length ? await resolveMessageFiles(opts.files) : undefined;
+    const postOptions = files?.length ? { body, files } : { body };
     const data = await this.client.rest.post(Routes.channelMessages(this.channelId), postOptions);
     return new Message(this.client, data as APIMessage);
   }

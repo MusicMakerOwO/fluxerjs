@@ -3,8 +3,18 @@
     <div class="hero">
       <h1>Guides</h1>
       <p class="lead">Learn how to build bots with Fluxer.js. Pick a guide to get started.</p>
+      <div v-if="quickLinks.length" class="quick-links">
+        <span class="quick-links-label">Quick links:</span>
+        <router-link
+          v-for="g in quickLinks"
+          :key="g.id"
+          :to="versionedPath(`/guides/${g.slug}`)"
+          class="quick-link">
+          {{ g.title }}
+        </router-link>
+      </div>
     </div>
-    <div v-for="(items, cat) in groupedGuides" :key="cat" class="guide-group">
+    <div v-for="(items, cat) in sortedGroupedGuides" :key="cat" class="guide-group">
       <h2 class="group-title">{{ getCategoryLabel(cat) }}</h2>
       <div class="guide-cards">
         <router-link
@@ -22,7 +32,11 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { getCategoryLabel } from '../data/guides';
+import {
+  getCategoryLabel,
+  CATEGORY_ORDER,
+  QUICK_LINK_SLUGS,
+} from '../data/guides';
 import { useGuidesStore } from '../stores/guides';
 import { useVersionedPath } from '../composables/useVersionedPath';
 import type { Guide } from '../data/guides';
@@ -38,6 +52,25 @@ const groupedGuides = computed(() => {
     groups[cat].push(g);
   }
   return groups;
+});
+
+const sortedGroupedGuides = computed(() => {
+  const groups = groupedGuides.value;
+  const sorted: Record<string, Guide[]> = {};
+  for (const cat of CATEGORY_ORDER) {
+    if (groups[cat]?.length) sorted[cat] = groups[cat];
+  }
+  for (const cat of Object.keys(groups)) {
+    if (!CATEGORY_ORDER.includes(cat)) sorted[cat] = groups[cat];
+  }
+  return sorted;
+});
+
+const quickLinks = computed(() => {
+  const bySlug = new Map(guidesStore.guides.map((g) => [g.slug, g]));
+  return QUICK_LINK_SLUGS.map((slug) => bySlug.get(slug)).filter(
+    (g): g is Guide => g != null,
+  );
 });
 </script>
 
@@ -57,6 +90,30 @@ const groupedGuides = computed(() => {
   font-size: 1rem;
   color: var(--text-secondary);
   line-height: 1.6;
+}
+
+.quick-links {
+  margin-top: 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+}
+
+.quick-links-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.quick-link {
+  font-size: 0.9rem;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.quick-link:hover {
+  text-decoration: underline;
 }
 
 .guide-group {

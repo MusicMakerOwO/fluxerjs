@@ -1,11 +1,55 @@
 import type { APIEmbed } from '@fluxerjs/types';
 import { EmbedBuilder } from '@fluxerjs/builders';
 
-/** File data for message attachment uploads (Buffer supported in Node.js). */
-export interface MessageFileData {
+/** Resolved file data (after URL fetch). Used internally by REST layer. */
+export interface ResolvedMessageFile {
   name: string;
   data: Blob | ArrayBuffer | Uint8Array | Buffer;
   filename?: string;
+}
+
+/** File data for message attachment uploads. Use `data` for buffers or `url` to fetch from a URL. */
+export type MessageFileData =
+  | {
+      name: string;
+      data: Blob | ArrayBuffer | Uint8Array | Buffer;
+      filename?: string;
+    }
+  | {
+      name: string;
+      url: string;
+      filename?: string;
+    };
+
+const FILE_FETCH_TIMEOUT_MS = 30_000;
+
+/** Resolve files: fetch URLs to buffers, pass through data as-is. */
+export async function resolveMessageFiles(
+  files: MessageFileData[],
+): Promise<ResolvedMessageFile[]> {
+  const result: ResolvedMessageFile[] = [];
+  for (let i = 0; i < files.length; i++) {
+    const f = files[i]!;
+    const filename = f.filename ?? f.name;
+    if ('url' in f && f.url) {
+      if (!URL.canParse(f.url)) {
+        throw new Error(`Invalid file URL at index ${i}: ${f.url}`);
+      }
+      const res = await fetch(f.url, {
+        signal: AbortSignal.timeout(FILE_FETCH_TIMEOUT_MS),
+      });
+      if (!res.ok) {
+        throw new Error(`Failed to fetch file from ${f.url}: ${res.status} ${res.statusText}`);
+      }
+      const data = await res.arrayBuffer();
+      result.push({ name: f.name, data, filename });
+    } else if ('data' in f && f.data != null) {
+      result.push({ name: f.name, data: f.data, filename });
+    } else {
+      throw new Error(`File at index ${i} must have either "data" or "url"`);
+    }
+  }
+  return result;
 }
 
 /** Attachment metadata for file uploads (id matches FormData index). */

@@ -8,17 +8,13 @@ import type {
 } from '@fluxerjs/types';
 import { Routes } from '@fluxerjs/types';
 import { EmbedBuilder } from '@fluxerjs/builders';
-import { buildSendBody } from '../util/messageUtils.js';
+import { buildSendBody, resolveMessageFiles, type MessageFileData } from '../util/messageUtils.js';
 import type { Message } from './Message.js';
 import type { User } from './User.js';
 import { cdnAvatarURL } from '../util/cdn.js';
 
-/** File data for webhook attachment uploads (Buffer supported in Node.js). */
-export interface WebhookFileData {
-  name: string;
-  data: Blob | ArrayBuffer | Uint8Array | Buffer;
-  filename?: string;
-}
+/** File data for webhook attachment uploads. Use `data` for buffers or `url` to fetch from a URL. */
+export type WebhookFileData = MessageFileData;
 
 /** Attachment metadata for webhook file uploads (id matches FormData index). */
 export interface WebhookAttachmentMeta {
@@ -152,9 +148,10 @@ export class Webhook extends Base {
 
     const route = Routes.webhookExecute(this.id, this.token) + (wait ? '?wait=true' : '');
 
-    // Same pattern as ChannelManager: { body, files } when files present
-    const postOptions = opts.files?.length
-      ? { body, files: opts.files, auth: false as const }
+    // Same pattern as ChannelManager: { body, files } when files present (URLs resolved automatically)
+    const files = opts.files?.length ? await resolveMessageFiles(opts.files) : undefined;
+    const postOptions = files?.length
+      ? { body, files, auth: false as const }
       : { body, auth: false as const };
 
     const data = await this.client.rest.post<import('@fluxerjs/types').APIMessage | undefined>(

@@ -11,6 +11,24 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    version: '1.1.4',
+    date: '2026-02-18',
+    sections: [
+      {
+        title: 'File attachments by URL',
+        items: [
+          'files option now accepts URL — pass { name, url } to attach files from a URL; SDK fetches automatically (channel.send, message.reply, webhook.send)',
+          '30s fetch timeout; URL validation with URL.canParse()',
+          'New guide: File Attachments by URL',
+        ],
+      },
+      {
+        title: 'Guides',
+        items: ['Guides index — category order and quick links for easier discovery'],
+      },
+    ],
+  },
+  {
     version: '1.1.3',
     date: '2026-02-18',
     sections: [

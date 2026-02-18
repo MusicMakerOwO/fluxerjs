@@ -4,7 +4,7 @@ import { emitDeprecationWarning } from '@fluxerjs/util';
 import { FluxerAPIError, RateLimitError } from '@fluxerjs/rest';
 import { FluxerError } from '../errors/FluxerError.js';
 import { ErrorCodes } from '../errors/ErrorCodes.js';
-import { buildSendBody } from '../util/messageUtils.js';
+import { buildSendBody, resolveMessageFiles } from '../util/messageUtils.js';
 import type { MessageSendOptions } from '../util/messageUtils.js';
 import type { Client } from './Client.js';
 import type { Channel } from '../structures/Channel.js';
@@ -115,7 +115,8 @@ export class ChannelManager extends Collection<string, Channel> {
     const opts = typeof payload === 'string' ? { content: payload } : payload;
     const body = buildSendBody(payload);
     const { Message } = await import('../structures/Message.js');
-    const postOptions = opts.files?.length ? { body, files: opts.files } : { body };
+    const files = opts.files?.length ? await resolveMessageFiles(opts.files) : undefined;
+    const postOptions = files?.length ? { body, files } : { body };
     const data = await this.client.rest.post(Routes.channelMessages(channelId), postOptions);
     return new Message(this.client, data as import('@fluxerjs/types').APIMessage);
   }

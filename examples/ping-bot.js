@@ -201,7 +201,7 @@ commands.set('bme', {
       for (const [name, bit] of Object.entries(PermissionFlags)) {
         if (typeof bit === 'number' && me.permissions.has(bit)) permNames.push(name);
       }
-    } catch {}
+    } catch { /* ignore import error */ }
 
     const embed = new EmbedBuilder()
       .setTitle('guild.members.me')
@@ -227,6 +227,17 @@ commands.set('bme', {
       .setTimestamp();
 
     await message.reply({ embeds: [embed.toJSON()] });
+  },
+});
+
+commands.set('attachurl', {
+  description: 'Test file attachment by URL (sends image fetched from URL)',
+  async execute(message) {
+    const url = 'https://www.w3schools.com/html/pic_trulli.jpg';
+    await message.reply({
+      content: 'File attached from URL:',
+      files: [{ name: 'trulli.jpg', url }],
+    });
   },
 });
 

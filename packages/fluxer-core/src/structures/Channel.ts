@@ -3,7 +3,7 @@ import { MessageManager } from '../client/MessageManager.js';
 import { MessageCollector } from '../util/MessageCollector.js';
 import type { MessageCollectorOptions } from '../util/MessageCollector.js';
 import { Base } from './Base.js';
-import { buildSendBody } from '../util/messageUtils.js';
+import { buildSendBody, resolveMessageFiles } from '../util/messageUtils.js';
 import type { MessageSendOptions } from '../util/messageUtils.js';
 import type {
   APIChannel,
@@ -210,7 +210,8 @@ export class TextChannel extends GuildChannel {
     const opts = typeof options === 'string' ? { content: options } : options;
     const body = buildSendBody(options);
     const { Message } = await import('./Message.js');
-    const postOptions = opts.files?.length ? { body, files: opts.files } : { body };
+    const files = opts.files?.length ? await resolveMessageFiles(opts.files) : undefined;
+    const postOptions = files?.length ? { body, files } : { body };
     const data = await this.client.rest.post(Routes.channelMessages(this.id), postOptions);
     return new Message(this.client, data as import('@fluxerjs/types').APIMessage);
   }
@@ -315,7 +316,8 @@ export class DMChannel extends Channel {
     const opts = typeof options === 'string' ? { content: options } : options;
     const body = buildSendBody(options);
     const { Message } = await import('./Message.js');
-    const postOptions = opts.files?.length ? { body, files: opts.files } : { body };
+    const files = opts.files?.length ? await resolveMessageFiles(opts.files) : undefined;
+    const postOptions = files?.length ? { body, files } : { body };
     const data = await this.client.rest.post(Routes.channelMessages(this.id), postOptions);
     return new Message(this.client, data as import('@fluxerjs/types').APIMessage);
   }

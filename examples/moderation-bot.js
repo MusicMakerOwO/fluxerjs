@@ -13,7 +13,8 @@
  * Usage:
  *   FLUXER_BOT_TOKEN=your_token node examples/moderation-bot.js
  *
- * @see https://fluxerjs.blstmo.com/v/latest/guides/permissions-moderation
+ * @see https://fluxerjs.blstmo.com/v/latest/guides/permissions
+ * @see https://fluxerjs.blstmo.com/v/latest/guides/moderation
  */
 
 import {
