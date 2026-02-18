@@ -23,7 +23,7 @@ export class GuildMemberManager extends Collection<string, GuildMember> {
    */
   get me(): GuildMember | null {
     const userId = this.guild.client.user?.id;
-    return userId ? this.get(userId) ?? null : null;
+    return userId ? (this.get(userId) ?? null) : null;
   }
 
   /**

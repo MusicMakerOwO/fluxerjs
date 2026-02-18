@@ -2,7 +2,11 @@ import type { Client } from '../client/Client.js';
 import { Base } from './Base.js';
 import type { APIRole, RESTUpdateRoleBody } from '@fluxerjs/types';
 import { Routes } from '@fluxerjs/types';
-import { PermissionFlags, resolvePermissionsToBitfield, type PermissionResolvable } from '@fluxerjs/util';
+import {
+  PermissionFlags,
+  resolvePermissionsToBitfield,
+  type PermissionResolvable,
+} from '@fluxerjs/util';
 
 /** Represents a role in a guild. */
 export class Role extends Base {
@@ -90,9 +94,10 @@ export class Role extends Base {
     const body: Record<string, unknown> = {};
     if (options.name !== undefined) body.name = options.name;
     if (options.permissions !== undefined) {
-      body.permissions = typeof options.permissions === 'string'
-        ? options.permissions
-        : resolvePermissionsToBitfield(options.permissions);
+      body.permissions =
+        typeof options.permissions === 'string'
+          ? options.permissions
+          : resolvePermissionsToBitfield(options.permissions);
     }
     if (options.color !== undefined) body.color = options.color;
     if (options.hoist !== undefined) body.hoist = options.hoist;

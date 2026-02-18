@@ -18,7 +18,7 @@ export const changelogEntries: ChangelogEntry[] = [
         title: 'Guild members',
         items: [
           'guild.members.me — Discord.js parity: returns the current bot user as a GuildMember in that guild, or null if not cached',
-          'guild.members.fetchMe() — fetch and cache the bot\'s member when not in cache',
+          "guild.members.fetchMe() — fetch and cache the bot's member when not in cache",
           'GuildMemberManager — guild.members extends Collection with me getter and fetchMe()',
         ],
       },

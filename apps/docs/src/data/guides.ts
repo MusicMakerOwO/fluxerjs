@@ -1232,9 +1232,9 @@ await client.login(process.env.FLUXER_BOT_TOKEN);`,
         language: 'javascript',
       },
       {
-        title: 'Bot\'s own permissions (guild.members.me)',
+        title: "Bot's own permissions (guild.members.me)",
         description:
-          'Use guild.members.me to get the bot\'s GuildMember. Returns null if not cached. Use guild.members.fetchMe() to load it. Discord.js parity.',
+          "Use guild.members.me to get the bot's GuildMember. Returns null if not cached. Use guild.members.fetchMe() to load it. Discord.js parity.",
         code: `// Check if the bot can ban members in this guild
 const guild = message.guild ?? await message.client.guilds.fetch(message.guildId);
 const me = guild?.members.me ?? (guild ? await guild.members.fetchMe() : null);
@@ -1360,7 +1360,7 @@ await client.login(process.env.FLUXER_BOT_TOKEN);`,
       {
         title: 'Overview',
         description:
-          'Guild roles can be created, fetched, edited, and deleted. Use guild.createRole(), guild.fetchRoles(), guild.fetchRole(roleId), role.edit(), and role.delete(). Requires Manage Roles permission. For permission bitfields, use resolvePermissionsToBitfield() or role.has() to check a role\'s permissions.',
+          "Guild roles can be created, fetched, edited, and deleted. Use guild.createRole(), guild.fetchRoles(), guild.fetchRole(roleId), role.edit(), and role.delete(). Requires Manage Roles permission. For permission bitfields, use resolvePermissionsToBitfield() or role.has() to check a role's permissions.",
       },
       {
         title: 'Create a role',
@@ -1415,7 +1415,8 @@ await role.edit({
       },
       {
         title: 'Delete a role',
-        description: 'Use role.delete() to remove a role. The role is removed from guild.roles cache.',
+        description:
+          'Use role.delete() to remove a role. The role is removed from guild.roles cache.',
         code: `const role = guild.roles.get(roleId) ?? await guild.fetchRole(roleId);
 await role.delete();
 await message.reply('Role deleted.');`,

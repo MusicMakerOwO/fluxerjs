@@ -255,7 +255,13 @@ commands.set('userinfo', {
       );
       return;
     }
-    const { user, userData, globalProfile: globalProfileData, serverProfile: serverProfileData, memberData } = data;
+    const {
+      user,
+      userData,
+      globalProfile: globalProfileData,
+      serverProfile: serverProfileData,
+      memberData,
+    } = data;
     const globalProfileUserProfile = globalProfileData?.user_profile;
     const serverProfileUserProfile = serverProfileData?.user_profile;
     const bannerUrl =
@@ -269,14 +275,10 @@ commands.set('userinfo', {
     const accentColor =
       serverProfileUserProfile &&
       (serverProfileUserProfile.accent_color ?? serverProfileUserProfile.banner_color) != null
-        ? Number(
-            serverProfileUserProfile.accent_color ?? serverProfileUserProfile.banner_color,
-          )
+        ? Number(serverProfileUserProfile.accent_color ?? serverProfileUserProfile.banner_color)
         : globalProfileUserProfile &&
             (globalProfileUserProfile.accent_color ?? globalProfileUserProfile.banner_color) != null
-          ? Number(
-              globalProfileUserProfile.accent_color ?? globalProfileUserProfile.banner_color,
-            )
+          ? Number(globalProfileUserProfile.accent_color ?? globalProfileUserProfile.banner_color)
           : userData.avatar_color != null
             ? Number(userData.avatar_color)
             : memberData?.accent_color != null
@@ -302,7 +304,11 @@ commands.set('userinfo', {
       { name: 'Discriminator', value: userData.discriminator ?? '0', inline: true },
       {
         name: 'Avatar',
-        value: userData.avatar ? (userData.avatar.startsWith('a_') ? 'Animated' : 'Set') : 'Default',
+        value: userData.avatar
+          ? userData.avatar.startsWith('a_')
+            ? 'Animated'
+            : 'Set'
+          : 'Default',
         inline: true,
       },
       {
@@ -383,9 +389,7 @@ commands.set('userinfo', {
         if (memberData.roles?.length) {
           const roleIds = memberData.roles.filter((id) => id !== message.guildId);
           const roleNames = guild
-            ? roleIds
-                .map((id) => guild.roles.get(id)?.name ?? id)
-                .slice(0, 20)
+            ? roleIds.map((id) => guild.roles.get(id)?.name ?? id).slice(0, 20)
             : roleIds.slice(0, 20);
           const display =
             roleNames.length > 0
