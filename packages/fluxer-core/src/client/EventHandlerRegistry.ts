@@ -117,6 +117,7 @@ handlers.set('MESSAGE_REACTION_REMOVE_EMOJI', async (client, d) => {
 handlers.set('GUILD_CREATE', async (client, d) => {
   const { Guild } = await import('../structures/Guild.js');
   const { Channel } = await import('../structures/Channel.js');
+  const { GuildMember } = await import('../structures/GuildMember.js');
   const raw = d as APIGuild & { properties?: Record<string, unknown>; roles?: unknown };
   const guildData: APIGuild & { roles?: APIRole[] } =
     raw?.properties != null
@@ -127,10 +128,18 @@ handlers.set('GUILD_CREATE', async (client, d) => {
   const g = d as APIGuild & {
     channels?: APIChannel[];
     voice_states?: Array<{ user_id: string; channel_id: string | null }>;
+    members?: Array<APIGuildMember & { user: { id: string }; guild_id?: string }>;
   };
   for (const ch of g.channels ?? []) {
     const channel = Channel.from(client, ch);
     if (channel) client.channels.set(channel.id, channel);
+  }
+  for (const m of g.members ?? []) {
+    if (m?.user?.id) {
+      const memberData = { ...m, guild_id: guild.id };
+      const member = new GuildMember(client, memberData, guild);
+      guild.members.set(member.id, member);
+    }
   }
   client.emit(Events.GuildCreate, guild);
   if (g.voice_states?.length) {

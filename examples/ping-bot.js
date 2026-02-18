@@ -176,6 +176,60 @@ commands.set('info', {
   },
 });
 
+commands.set('bme', {
+  description: 'Display guild.members.me (bot\'s member) info in this server',
+  async execute(message, client) {
+    const guildId = message.guildId;
+    if (!guildId) {
+      await message.reply('Use this command in a server.');
+      return;
+    }
+    const guild = client.guilds.get(guildId) ?? (await client.guilds.fetch(guildId));
+    if (!guild) {
+      await message.reply('Could not find this server.');
+      return;
+    }
+    const me = guild.members.me ?? (await guild.members.fetchMe());
+    const avatarUrl = me.displayAvatarURL({ size: 256 });
+    const accentColor = me.accentColor ?? me.user.avatarColor ?? BRAND_COLOR;
+    const roleNames = me.roles
+      .filter((id) => id !== guild.id)
+      .map((id) => guild.roles.get(id)?.name ?? id);
+    const permNames = [];
+    try {
+      const { PermissionFlags } = await import('@fluxerjs/core');
+      for (const [name, bit] of Object.entries(PermissionFlags)) {
+        if (typeof bit === 'number' && me.permissions.has(bit)) permNames.push(name);
+      }
+    } catch {}
+
+    const embed = new EmbedBuilder()
+      .setTitle('guild.members.me')
+      .setDescription('Bot\'s GuildMember in this server')
+      .setColor(accentColor)
+      .setThumbnail(avatarUrl)
+      .addFields(
+        { name: 'ID', value: `\`${me.id}\``, inline: true },
+        { name: 'Username', value: me.user.username ?? '—', inline: true },
+        { name: 'Display name', value: me.displayName ?? '—', inline: true },
+        { name: 'Nickname', value: me.nick ?? '*(none)*', inline: true },
+        { name: 'Joined', value: me.joinedAt.toISOString(), inline: true },
+        { name: 'Roles', value: roleNames.length ? roleNames.slice(0, 15).join(', ') : '*(none)*', inline: false },
+        { name: 'Mute', value: String(me.mute), inline: true },
+        { name: 'Deaf', value: String(me.deaf), inline: true },
+        {
+          name: 'Permissions (sample)',
+          value: permNames.length ? permNames.slice(0, 12).join(', ') : '*(none)*',
+          inline: false,
+        },
+      )
+      .setFooter({ text: `Guild: ${guild.name}` })
+      .setTimestamp();
+
+    await message.reply({ embeds: [embed.toJSON()] });
+  },
+});
+
 /** Get human-readable badge names from user flags (checks common badges that fit in 32-bit). */
 function getBadgeNames(flags) {
   if (flags == null || typeof flags !== 'number') return [];

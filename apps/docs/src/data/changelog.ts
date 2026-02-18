@@ -11,6 +11,18 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    version: '1.1.3',
+    date: '2026-02-18',
+    sections: [
+      {
+        title: 'Guild members cache',
+        items: [
+          'GUILD_CREATE — cache members from payload when gateway sends them (Discord.js parity; guild.members.me often populated on join)',
+        ],
+      },
+    ],
+  },
+  {
     version: '1.1.2',
     date: '2026-02-18',
     sections: [
