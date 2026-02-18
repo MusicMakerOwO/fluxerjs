@@ -95,6 +95,46 @@ export class GuildMember extends Base {
   }
 
   /**
+   * Edit this guild member. PATCH /guilds/{id}/members/{userId} or /members/@me for the bot.
+   * For @me: nick, avatar, banner, bio, pronouns, accent_color, profile_flags, mute, deaf,
+   * communication_disabled_until, timeout_reason, channel_id, connection_id.
+   * For other members: same plus roles (array of role IDs).
+   */
+  async edit(options: {
+    nick?: string | null;
+    roles?: string[];
+    avatar?: string | null;
+    banner?: string | null;
+    bio?: string | null;
+    pronouns?: string | null;
+    accent_color?: number | null;
+    profile_flags?: number | null;
+    mute?: boolean;
+    deaf?: boolean;
+    communication_disabled_until?: string | null;
+    timeout_reason?: string | null;
+    channel_id?: string | null;
+    connection_id?: string | null;
+  }): Promise<this> {
+    const isMe = this.client.user?.id === this.id;
+    const route = isMe
+      ? `/guilds/${this.guild.id}/members/@me`
+      : Routes.guildMember(this.guild.id, this.id);
+    const data = await this.client.rest.patch<import('@fluxerjs/types').APIGuildMember>(route, {
+      body: options,
+      auth: true,
+    });
+    this.nick = data.nick ?? this.nick;
+    if (data.roles) (this as { roles: string[] }).roles = data.roles;
+    if (data.communication_disabled_until != null) {
+      (this as { communicationDisabledUntil: Date | null }).communicationDisabledUntil = data.communication_disabled_until
+        ? new Date(data.communication_disabled_until)
+        : null;
+    }
+    return this;
+  }
+
+  /**
    * Get the member's guild-level permissions (from roles only, no channel overwrites).
    * Use this for server-wide permission checks (e.g. ban, kick, manage roles).
    * @returns Object with has(permission) to check specific permissions

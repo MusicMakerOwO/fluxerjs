@@ -208,6 +208,18 @@ export class Message extends Base {
     await this.client.rest.delete(Routes.channelMessage(this.channelId, this.id));
   }
 
+  /**
+   * Delete a specific attachment from this message.
+   * DELETE /channels/{id}/messages/{id}/attachments/{attachmentId}.
+   */
+  async deleteAttachment(attachmentId: string): Promise<void> {
+    await this.client.rest.delete(
+      Routes.channelMessageAttachment(this.channelId, this.id, attachmentId),
+      { auth: true },
+    );
+    this.attachments.delete(attachmentId);
+  }
+
   /** Pin this message to the channel. Requires Manage Messages permission. */
   async pin(): Promise<void> {
     await this.client.rest.put(Routes.channelPinMessage(this.channelId, this.id));

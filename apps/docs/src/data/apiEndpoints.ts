@@ -307,14 +307,6 @@ export const apiEndpoints: ApiEndpoint[] = [
     responseRef: 'ChannelPinResponse[]',
   },
   {
-    method: 'POST',
-    path: '/channels/:channel_id/pins/ack',
-    summary: 'Acknowledge pin update',
-    auth: 'bot',
-    category: 'pins-reactions',
-    responseCode: 204,
-  },
-  {
     method: 'PUT',
     path: '/channels/:channel_id/pins/:message_id',
     summary: 'Pin message',

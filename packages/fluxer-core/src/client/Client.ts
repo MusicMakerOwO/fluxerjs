@@ -29,7 +29,14 @@ import type {
   GatewayPresenceUpdateDispatchData,
   GatewayWebhooksUpdateDispatchData,
 } from '@fluxerjs/types';
-import type { APIChannel, APIGuild, APIRole, APIUser, APIUserPartial } from '@fluxerjs/types';
+import type {
+  APIChannel,
+  APIGuild,
+  APIRole,
+  APIUser,
+  APIUserPartial,
+  APIInstance,
+} from '@fluxerjs/types';
 import { emitDeprecationWarning, formatEmoji, parseEmoji } from '@fluxerjs/util';
 import { User } from '../structures/User.js';
 import { UsersManager } from './UsersManager.js';
@@ -206,6 +213,14 @@ export class Client extends EventEmitter {
       );
     }
     return encodeURIComponent(parsed.name);
+  }
+
+  /**
+   * Fetch instance info (API URL, gateway URL, features). GET /instance.
+   * Does not require authentication.
+   */
+  async fetchInstance(): Promise<APIInstance> {
+    return this.rest.get<APIInstance>(Routes.instance(), { auth: false });
   }
 
   /**

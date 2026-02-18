@@ -1408,6 +1408,20 @@ if (me?.permissions.has(PermissionFlags.BanMembers)) {
         language: 'javascript',
       },
       {
+        title: "Editing the bot's guild profile (nickname)",
+        description:
+          "Use guild.members.me.edit({ nick }) to change the bot's nickname in that guild. Pass nick: null to clear and show the username. Requires Change Nickname permission (or bot has Manage Nicknames). See examples/ping-bot.js for a !setnick command.",
+        code: `const guild = message.guild ?? await client.guilds.fetch(message.guildId);
+const me = guild?.members.me ?? (guild ? await guild.members.fetchMe() : null);
+if (me) {
+  await me.edit({ nick: 'My Custom Nick' });
+  await message.reply('Nickname updated!');
+}
+// Clear nickname (show username)
+await me.edit({ nick: null });`,
+        language: 'javascript',
+      },
+      {
         title: 'Owner override',
         description:
           'The guild owner automatically receives all permissions regardless of roles. No need to give the owner a role with Administrator.',

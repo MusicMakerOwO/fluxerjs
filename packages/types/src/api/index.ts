@@ -11,4 +11,5 @@ export * from './invite.js';
 export * from './ban.js';
 export * from './errors.js';
 export * from './gateway.js';
+export * from './instance.js';
 export * from './interaction.js';

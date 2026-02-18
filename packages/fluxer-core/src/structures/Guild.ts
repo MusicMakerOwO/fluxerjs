@@ -14,6 +14,7 @@ import type {
   APIGuildAuditLog,
   APIGuildMember,
   APIRole,
+  APIVanityURL,
   RESTCreateRoleBody,
   GuildFeature,
   GuildVerificationLevel,
@@ -411,6 +412,161 @@ export class Guild extends Base {
   }
 
   /**
+   * Edit this guild. PATCH /guilds/{id}.
+   * Requires guild owner or Administrator.
+   */
+  async edit(options: {
+    name?: string;
+    icon?: string | null;
+    system_channel_id?: string | null;
+    system_channel_flags?: number;
+    afk_channel_id?: string | null;
+    afk_timeout?: number;
+    default_message_notifications?: DefaultMessageNotifications;
+    verification_level?: GuildVerificationLevel;
+    mfa_level?: GuildMFALevel;
+    explicit_content_filter?: GuildExplicitContentFilter;
+    banner?: string | null;
+    splash?: string | null;
+    embed_splash?: string | null;
+    splash_card_alignment?: string;
+    features?: GuildFeature[];
+  }): Promise<this> {
+    const data = await this.client.rest.patch<APIGuild>(Routes.guild(this.id), {
+      body: options,
+      auth: true,
+    });
+    this.name = data.name;
+    this.icon = data.icon ?? this.icon;
+    this.banner = data.banner ?? this.banner;
+    this.splash = data.splash ?? this.splash;
+    this.systemChannelId = data.system_channel_id ?? this.systemChannelId;
+    this.afkChannelId = data.afk_channel_id ?? this.afkChannelId;
+    this.afkTimeout = data.afk_timeout ?? this.afkTimeout;
+    this.verificationLevel = data.verification_level ?? this.verificationLevel;
+    this.mfaLevel = data.mfa_level ?? this.mfaLevel;
+    this.explicitContentFilter = data.explicit_content_filter ?? this.explicitContentFilter;
+    this.defaultMessageNotifications =
+      data.default_message_notifications ?? this.defaultMessageNotifications;
+    this.features = data.features ?? this.features;
+    return this;
+  }
+
+  /**
+   * Delete this guild. POST /guilds/{id}/delete.
+   * Must be the guild owner.
+   */
+  async delete(): Promise<void> {
+    await this.client.rest.post(Routes.guildDelete(this.id), { auth: true });
+    this.client.guilds.delete(this.id);
+  }
+
+  /**
+   * Fetch vanity URL for this guild. GET /guilds/{id}/vanity-url.
+   * Requires Manage Guild permission.
+   */
+  async fetchVanityURL(): Promise<APIVanityURL> {
+    return this.client.rest.get<APIVanityURL>(Routes.guildVanityUrl(this.id), { auth: true });
+  }
+
+  /**
+   * Transfer guild ownership to another user. POST /guilds/{id}/transfer-ownership.
+   * Must be the guild owner.
+   */
+  async transferOwnership(newOwnerId: string, password?: string): Promise<void> {
+    await this.client.rest.post(Routes.guildTransferOwnership(this.id), {
+      body: { new_owner_id: newOwnerId, ...(password != null && { password }) },
+      auth: true,
+    });
+  }
+
+  /**
+   * Set text channel flexible names feature. PATCH /guilds/{id}/text-channel-flexible-names.
+   */
+  setTextChannelFlexibleNames(enabled: boolean): Promise<this> {
+    return this.client.rest
+      .patch<APIGuild>(Routes.guildTextChannelFlexibleNames(this.id), {
+        body: { enabled },
+        auth: true,
+      })
+      .then(() => this);
+  }
+
+  /**
+   * Set detached banner feature. PATCH /guilds/{id}/detached-banner.
+   */
+  setDetachedBanner(enabled: boolean): Promise<this> {
+    return this.client.rest
+      .patch<APIGuild>(Routes.guildDetachedBanner(this.id), {
+        body: { enabled },
+        auth: true,
+      })
+      .then(() => this);
+  }
+
+  /**
+   * Set disallow unclaimed accounts. PATCH /guilds/{id}/disallow-unclaimed-accounts.
+   */
+  setDisallowUnclaimedAccounts(enabled: boolean): Promise<this> {
+    return this.client.rest
+      .patch<APIGuild>(Routes.guildDisallowUnclaimedAccounts(this.id), {
+        body: { enabled },
+        auth: true,
+      })
+      .then(() => this);
+  }
+
+  /**
+   * Update role positions. PATCH /guilds/{id}/roles.
+   * @param updates - Array of { id, position? }
+   */
+  async setRolePositions(
+    updates: Array<{ id: string; position?: number }>,
+  ): Promise<APIRole[]> {
+    const data = await this.client.rest.patch<APIRole[] | Record<string, APIRole>>(
+      Routes.guildRoles(this.id),
+      { body: updates, auth: true },
+    );
+    const list = Array.isArray(data) ? data : Object.values(data ?? {});
+    for (const r of list) {
+      this.roles.set(r.id, new Role(this.client, r, this.id));
+    }
+    return list as APIRole[];
+  }
+
+  /**
+   * Update role hoist positions. PATCH /guilds/{id}/roles/hoist-positions.
+   */
+  async setRoleHoistPositions(
+    updates: Array<{ id: string; hoist_position?: number }>,
+  ): Promise<APIRole[]> {
+    const data = await this.client.rest.patch<APIRole[] | Record<string, APIRole>>(
+      Routes.guildRolesHoistPositions(this.id),
+      { body: updates, auth: true },
+    );
+    const list = Array.isArray(data) ? data : Object.values(data ?? {});
+    for (const r of list) {
+      this.roles.set(r.id, new Role(this.client, r, this.id));
+    }
+    return list as APIRole[];
+  }
+
+  /**
+   * Reset role hoist positions. DELETE /guilds/{id}/roles/hoist-positions.
+   */
+  async resetRoleHoistPositions(): Promise<APIRole[]> {
+    const data = await this.client.rest.delete<APIRole[] | Record<string, APIRole>>(
+      Routes.guildRolesHoistPositions(this.id),
+      { auth: true },
+    );
+    const list = Array.isArray(data) ? data : Object.values(data ?? {});
+    for (const r of list) {
+      this.roles.set(r.id, new Role(this.client, r, this.id));
+    }
+    return list as APIRole[];
+  }
+
+  /**
    * Update channel positions.
    * @param updates - Array of { id, position?, parent_id?, lock_permissions? }
    * Requires Manage Channels permission.
@@ -427,5 +583,48 @@ export class Guild extends Base {
       body: updates,
       auth: true,
     });
+  }
+
+  /**
+   * Bulk create emojis. POST /guilds/{id}/emojis/bulk.
+   * @param emojis - Array of { name, image } (base64), 1-50 emojis
+   * @returns Array of created GuildEmoji objects
+   */
+  async createEmojisBulk(
+    emojis: Array<{ name: string; image: string }>,
+  ): Promise<import('./GuildEmoji.js').GuildEmoji[]> {
+    const { GuildEmoji } = await import('./GuildEmoji.js');
+    const data = await this.client.rest.post<
+      import('@fluxerjs/types').APIEmoji[] | { emojis?: import('@fluxerjs/types').APIEmoji[] }
+    >(Routes.guildEmojisBulk(this.id), {
+      body: { emojis },
+      auth: true,
+    });
+    const list = Array.isArray(data) ? data : (data?.emojis ?? []);
+    return list.map((e) => new GuildEmoji(this.client, { ...e, guild_id: this.id }, this.id));
+  }
+
+  /**
+   * Bulk create stickers. POST /guilds/{id}/stickers/bulk.
+   * @param stickers - Array of { name, image, description?, tags? }, 1-50 stickers
+   * @returns Array of created GuildSticker objects
+   */
+  async createStickersBulk(
+    stickers: Array<{
+      name: string;
+      image: string;
+      description?: string;
+      tags?: string[];
+    }>,
+  ): Promise<import('./GuildSticker.js').GuildSticker[]> {
+    const { GuildSticker } = await import('./GuildSticker.js');
+    const data = await this.client.rest.post<
+      import('@fluxerjs/types').APISticker[] | { stickers?: import('@fluxerjs/types').APISticker[] }
+    >(Routes.guildStickersBulk(this.id), {
+      body: { stickers },
+      auth: true,
+    });
+    const list = Array.isArray(data) ? data : (data?.stickers ?? []);
+    return list.map((s) => new GuildSticker(this.client, { ...s, guild_id: this.id }, this.id));
   }
 }

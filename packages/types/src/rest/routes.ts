@@ -27,9 +27,27 @@ export const Routes = {
   channelInvites: (id: Snowflake) => `/channels/${id}/invites` as const,
   channelPermission: (channelId: Snowflake, overwriteId: Snowflake) =>
     `/channels/${channelId}/permissions/${overwriteId}` as const,
+  channelRecipient: (channelId: Snowflake, userId: Snowflake) =>
+    `/channels/${channelId}/recipients/${userId}` as const,
+  channelMessageAttachment: (channelId: Snowflake, messageId: Snowflake, attachmentId: Snowflake) =>
+    `/channels/${channelId}/messages/${messageId}/attachments/${attachmentId}` as const,
 
   // Guilds
+  guilds: () => '/guilds' as const,
   guild: (id: Snowflake) => `/guilds/${id}` as const,
+  guildDelete: (guildId: Snowflake) => `/guilds/${guildId}/delete` as const,
+  guildVanityUrl: (guildId: Snowflake) => `/guilds/${guildId}/vanity-url` as const,
+  guildTextChannelFlexibleNames: (guildId: Snowflake) =>
+    `/guilds/${guildId}/text-channel-flexible-names` as const,
+  guildDetachedBanner: (guildId: Snowflake) => `/guilds/${guildId}/detached-banner` as const,
+  guildDisallowUnclaimedAccounts: (guildId: Snowflake) =>
+    `/guilds/${guildId}/disallow-unclaimed-accounts` as const,
+  guildTransferOwnership: (guildId: Snowflake) =>
+    `/guilds/${guildId}/transfer-ownership` as const,
+  guildRolesHoistPositions: (guildId: Snowflake) =>
+    `/guilds/${guildId}/roles/hoist-positions` as const,
+  guildEmojisBulk: (guildId: Snowflake) => `/guilds/${guildId}/emojis/bulk` as const,
+  guildStickersBulk: (guildId: Snowflake) => `/guilds/${guildId}/stickers/bulk` as const,
   guildChannels: (id: Snowflake) => `/guilds/${id}/channels` as const,
   guildMembers: (id: Snowflake) => `/guilds/${id}/members` as const,
   guildMember: (guildId: Snowflake, userId: Snowflake) =>
@@ -63,6 +81,9 @@ export const Routes = {
   /** GET /users/{id}/profile. Pass guildId for server-specific profile. */
   userProfile: (id: Snowflake, guildId?: Snowflake): string =>
     guildId ? `/users/${id}/profile?guild_id=${guildId}` : `/users/${id}/profile`,
+
+  // Instance (unauthenticated)
+  instance: () => '/instance' as const,
 
   // Gateway
   gatewayBot: () => `/gateway/bot` as const,

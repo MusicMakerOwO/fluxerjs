@@ -99,6 +99,17 @@ export interface APIGuildAuditLogEntry {
   }>;
 }
 
+/** Response from GET /guilds/{id}/vanity-url */
+export interface APIVanityURL {
+  code: string | null;
+  uses: number;
+}
+
+/** Request body for guild feature toggles (text-channel-flexible-names, etc.) */
+export interface APIGuildFeatureToggle {
+  enabled: boolean;
+}
+
 /** Response from GET /guilds/{id}/audit-logs */
 export interface APIGuildAuditLog {
   audit_log_entries: APIGuildAuditLogEntry[];

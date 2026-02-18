@@ -13,6 +13,26 @@ export class GuildManager extends Collection<string, Guild> {
   }
 
   /**
+   * Create a guild. POST /guilds.
+   * @param options - name (required), icon (base64), empty_features
+   * @returns The created guild
+   */
+  async create(options: {
+    name: string;
+    icon?: string | null;
+    empty_features?: boolean;
+  }): Promise<Guild> {
+    const { Guild } = await import('../structures/Guild.js');
+    const data = await this.client.rest.post<import('@fluxerjs/types').APIGuild>(
+      Routes.guilds(),
+      { body: options, auth: true },
+    );
+    const guild = new Guild(this.client, data);
+    this.set(guild.id, guild);
+    return guild;
+  }
+
+  /**
    * Fetch a guild by ID from the API (or return from cache if present).
    * @param guildId - Snowflake of the guild
    * @returns The guild, or null if not found

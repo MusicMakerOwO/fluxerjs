@@ -186,6 +186,83 @@ export class GuildChannel extends Channel {
     const list = Array.isArray(data) ? data : Object.values(data ?? {});
     return list.map((i) => new Invite(this.client, i as import('@fluxerjs/types').APIInvite));
   }
+
+  /**
+   * Set or update a permission overwrite. PUT /channels/{id}/permissions/{overwriteId}.
+   * @param overwriteId - Role or member ID
+   * @param options - type (0=role, 1=member), allow, deny (permission bitfields)
+   */
+  async editPermission(
+    overwriteId: string,
+    options: { type: 0 | 1; allow?: string; deny?: string },
+  ): Promise<void> {
+    await this.client.rest.put(Routes.channelPermission(this.id, overwriteId), {
+      body: options,
+      auth: true,
+    });
+    const idx = this.permissionOverwrites.findIndex((o) => o.id === overwriteId);
+    const entry = {
+      id: overwriteId,
+      type: options.type,
+      allow: options.allow ?? '0',
+      deny: options.deny ?? '0',
+    };
+    if (idx >= 0) this.permissionOverwrites[idx] = entry;
+    else this.permissionOverwrites.push(entry);
+  }
+
+  /**
+   * Remove a permission overwrite. DELETE /channels/{id}/permissions/{overwriteId}.
+   */
+  async deletePermission(overwriteId: string): Promise<void> {
+    await this.client.rest.delete(Routes.channelPermission(this.id, overwriteId), { auth: true });
+    const idx = this.permissionOverwrites.findIndex((o) => o.id === overwriteId);
+    if (idx >= 0) this.permissionOverwrites.splice(idx, 1);
+  }
+
+  /**
+   * Edit this channel. PATCH /channels/{id}.
+   * Requires Manage Channel permission.
+   */
+  async edit(options: {
+    name?: string | null;
+    topic?: string | null;
+    parent_id?: string | null;
+    bitrate?: number | null;
+    user_limit?: number | null;
+    nsfw?: boolean;
+    rate_limit_per_user?: number;
+    rtc_region?: string | null;
+    permission_overwrites?: Array<{ id: string; type: number; allow?: string; deny?: string }>;
+  }): Promise<this> {
+    const data = await this.client.rest.patch<APIChannel>(Routes.channel(this.id), {
+      body: options,
+      auth: true,
+    });
+    this.name = data.name ?? this.name;
+    this.parentId = data.parent_id ?? this.parentId;
+    this.permissionOverwrites = data.permission_overwrites ?? this.permissionOverwrites;
+    const self = this as Record<string, unknown>;
+    if ('topic' in self && 'topic' in data) self.topic = data.topic ?? null;
+    if ('nsfw' in self && 'nsfw' in data) self.nsfw = data.nsfw ?? false;
+    if ('rate_limit_per_user' in data) self.rateLimitPerUser = data.rate_limit_per_user ?? 0;
+    if ('bitrate' in self && 'bitrate' in data) self.bitrate = data.bitrate ?? null;
+    if ('user_limit' in data) self.userLimit = data.user_limit ?? null;
+    if ('rtc_region' in data) self.rtcRegion = data.rtc_region ?? null;
+    return this;
+  }
+
+  /**
+   * Delete this channel. Requires Manage Channel permission.
+   * @param options - silent: if true, does not send a system message (default false)
+   */
+  async delete(options?: { silent?: boolean }): Promise<void> {
+    const url = Routes.channel(this.id) + (options?.silent ? '?silent=true' : '');
+    await this.client.rest.delete(url, { auth: true });
+    this.client.channels.delete(this.id);
+    const guild = this.client.guilds.get(this.guildId);
+    if (guild) guild.channels.delete(this.id);
+  }
 }
 
 export class TextChannel extends GuildChannel {
@@ -364,5 +441,28 @@ export class DMChannel extends Channel {
       'Use channel.messages.fetch(messageId) instead.',
     );
     return this.client.channels.fetchMessage(this.id, messageId);
+  }
+
+  /**
+   * Add a recipient to this Group DM. Requires Group DM (type GroupDM).
+   * PUT /channels/{id}/recipients/{userId}.
+   */
+  async addRecipient(userId: string): Promise<void> {
+    await this.client.rest.put(Routes.channelRecipient(this.id, userId), { auth: true });
+    const user = this.client.users.get(userId) ?? (await this.client.users.fetch(userId));
+    if (user) this.recipients.push(user);
+  }
+
+  /**
+   * Remove a recipient from this Group DM. Requires Group DM (type GroupDM).
+   * DELETE /channels/{id}/recipients/{userId}.
+   * @param options - silent: if true, does not send a system message (default false)
+   */
+  async removeRecipient(userId: string, options?: { silent?: boolean }): Promise<void> {
+    const url =
+      Routes.channelRecipient(this.id, userId) + (options?.silent ? '?silent=true' : '');
+    await this.client.rest.delete(url, { auth: true });
+    const idx = this.recipients.findIndex((u) => u.id === userId);
+    if (idx >= 0) this.recipients.splice(idx, 1);
   }
 }

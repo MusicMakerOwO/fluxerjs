@@ -3,6 +3,7 @@
  *
  * Demonstrates prefix commands, embeds, DMs, voice join, audio, and video playback.
  * DMs: !dm (DM yourself), !dmuser @user [message] (DM another user).
+ * Guild profile: !setnick [nickname] (change nickname), !setavatar [url] (change guild avatar).
  * Voice: !play (joins your VC and plays WebM/Opus audio via youtube-dl-exec). No FFmpeg.
  * Video: !playvideo [url] (streams MP4 in your VC; supports YouTube links or direct MP4; default demo).
  *   Set FLUXER_VIDEO_FFMPEG=1 to use FFmpeg decoding (recommended on macOS; avoids node-webcodecs crashes).
@@ -11,7 +12,8 @@
  * Usage (from repo root after npm install && npm run build):
  *   FLUXER_BOT_TOKEN=your_token node examples/ping-bot.js
  *
- * Optional env: FLUXER_API_URL for custom API base; VOICE_DEBUG=1 for voice connection logs.
+ * Optional env: FLUXER_API_URL for custom API base; VOICE_DEBUG=1 for voice connection logs;
+ * SETAVATAR_DEBUG=1 for guild avatar request/response logs.
  */
 
 import youtubedl from 'youtube-dl-exec';
@@ -173,6 +175,126 @@ commands.set('info', {
       .setTimestamp();
 
     await message.reply({ embeds: [embed.toJSON()] });
+  },
+});
+
+commands.set('setnick', {
+  description: "Change the bot's nickname in this server (!setnick [nickname])",
+  async execute(message, client, args) {
+    const guildId = message.guildId;
+    if (!guildId) {
+      await message.reply('Use this command in a server.');
+      return;
+    }
+    const guild = client.guilds.get(guildId) ?? (await client.guilds.fetch(guildId));
+    if (!guild) {
+      await message.reply('Could not find this server.');
+      return;
+    }
+    const me = guild.members.me ?? (await guild.members.fetchMe());
+    const newNick = args.join(' ').trim() || null;
+    try {
+      await me.edit({ nick: newNick });
+      await message.reply(
+        newNick
+          ? `Nickname set to \`${newNick}\` in this server.`
+          : 'Nickname cleared (showing username again).',
+      );
+    } catch (err) {
+      await message.reply(
+        'Failed to change nickname. The bot may need Change Nickname permission.',
+      ).catch(() => {});
+    }
+  },
+});
+
+const SETAVATAR_DEBUG = process.env.SETAVATAR_DEBUG === '1' || process.env.SETAVATAR_DEBUG === 'true';
+
+commands.set('setavatar', {
+  description: "Change the bot's guild avatar (!setavatar [image URL] or !setavatar clear)",
+  async execute(message, client, args) {
+    const guildId = message.guildId;
+    if (!guildId) {
+      await message.reply('Use this command in a server.');
+      return;
+    }
+    const guild = client.guilds.get(guildId) ?? (await client.guilds.fetch(guildId));
+    if (!guild) {
+      await message.reply('Could not find this server.');
+      return;
+    }
+    const me = guild.members.me ?? (await guild.members.fetchMe());
+    const arg = args[0]?.toLowerCase();
+    if (arg === 'clear' || arg === 'reset') {
+      try {
+        if (SETAVATAR_DEBUG) {
+          console.log('[setavatar] PATCH /guilds/%s/members/@me with avatar: null (clear)', guildId);
+        }
+        await me.edit({ avatar: null });
+        if (SETAVATAR_DEBUG) {
+          const updated = await guild.fetchMember(me.id);
+          console.log('[setavatar] Response: avatar=%s', updated.avatar ?? 'null');
+        }
+        await message.reply('Guild avatar cleared. Showing global avatar again.');
+      } catch (err) {
+        if (SETAVATAR_DEBUG) console.error('[setavatar] Clear failed:', err);
+        await message.reply('Failed to clear guild avatar.').catch(() => {});
+      }
+      return;
+    }
+    const url = args[0]?.trim();
+    if (!url || (!url.startsWith('http://') && !url.startsWith('https://'))) {
+      await message.reply(
+        'Provide an image URL: `!setavatar https://example.com/image.png` or `!setavatar clear` to reset.',
+      );
+      return;
+    }
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 30000);
+      const res = await fetch(url, { signal: controller.signal });
+      clearTimeout(timeout);
+      if (!res.ok) {
+        await message.reply(`Could not fetch image: ${res.status}`);
+        return;
+      }
+      const contentType = res.headers.get('content-type') ?? 'image/png';
+      const mime = contentType.split(';')[0].trim();
+      if (!mime.startsWith('image/')) {
+        await message.reply('URL must point to an image (png, jpeg, gif, webp).');
+        return;
+      }
+      const buf = Buffer.from(await res.arrayBuffer());
+      const base64 = buf.toString('base64');
+      const dataUri = `data:${mime};base64,${base64}`;
+      if (SETAVATAR_DEBUG) {
+        console.log(
+          '[setavatar] PATCH /guilds/%s/members/@me with avatar (dataUri len=%d, mime=%s)',
+          guildId,
+          dataUri.length,
+          mime,
+        );
+      }
+      await me.edit({ avatar: dataUri });
+      const updated = await guild.fetchMember(me.id);
+      if (SETAVATAR_DEBUG) {
+        console.log('[setavatar] Response: avatar=%s', updated.avatar ?? 'null');
+      }
+      if (dataUri && !updated.avatar) {
+        await message.reply(
+          'Request succeeded but the avatar was not applied. On Fluxer, guild avatars require a premium subscription—bots cannot set guild avatars.',
+        );
+      } else {
+        await message.reply('Guild avatar updated!');
+      }
+    } catch (err) {
+      if (SETAVATAR_DEBUG) console.error('[setavatar] Set failed:', err);
+      if (err?.name === 'AbortError') {
+        await message.reply('Timed out fetching image (30s).');
+      } else {
+        await message.reply('Failed to set guild avatar. Check the URL and try again.').catch(() => {});
+      }
+    }
   },
 });
 

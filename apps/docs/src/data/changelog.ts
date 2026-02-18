@@ -11,6 +11,83 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    version: '1.1.6',
+    date: '2026-02-18',
+    sections: [
+      {
+        title: 'Routes',
+        items: [
+          'instance() — GET /instance',
+          'channelRecipient(channelId, userId) — PUT/DELETE recipients',
+          'channelMessageAttachment(channelId, messageId, attachmentId) — DELETE attachment',
+          'guilds() — POST /guilds',
+          'guildDelete(guildId) — POST guild delete',
+          'guildVanityUrl(guildId) — GET vanity URL',
+          'guildTextChannelFlexibleNames(guildId), guildDetachedBanner(guildId), guildDisallowUnclaimedAccounts(guildId) — PATCH feature toggles',
+          'guildTransferOwnership(guildId) — POST transfer ownership',
+          'guildRolesHoistPositions(guildId) — PATCH/DELETE role hoist positions',
+          'guildEmojisBulk(guildId), guildStickersBulk(guildId) — POST bulk emojis/stickers',
+        ],
+      },
+      {
+        title: 'Types',
+        items: [
+          'APIInstance — response for GET /instance',
+          'APIVanityURL — response for GET vanity-url',
+          'APIGuildFeatureToggle — body for guild feature toggles',
+        ],
+      },
+      {
+        title: 'SDK — Client',
+        items: ['client.fetchInstance() — unauthenticated instance info'],
+      },
+      {
+        title: 'SDK — Channel / GuildChannel',
+        items: [
+          'guildChannel.edit(options) — PATCH channel',
+          'guildChannel.delete(options?) — DELETE channel',
+          'guildChannel.editPermission(overwriteId, options) — PUT permission overwrite',
+          'guildChannel.deletePermission(overwriteId) — DELETE permission overwrite',
+        ],
+      },
+      {
+        title: 'SDK — DMChannel',
+        items: [
+          'dmChannel.addRecipient(userId) — add recipient in group DMs',
+          'dmChannel.removeRecipient(userId, options?) — remove recipient',
+        ],
+      },
+      {
+        title: 'SDK — Message',
+        items: ['message.deleteAttachment(attachmentId) — delete a single attachment'],
+      },
+      {
+        title: 'SDK — GuildManager',
+        items: ['client.guilds.create(options) — create guild'],
+      },
+      {
+        title: 'SDK — Guild',
+        items: [
+          'guild.edit(options) — PATCH guild',
+          'guild.delete() — delete guild',
+          'guild.fetchVanityURL() — fetch vanity URL',
+          'guild.transferOwnership(newOwnerId, password?) — transfer ownership',
+          'guild.setTextChannelFlexibleNames(enabled), guild.setDetachedBanner(enabled), guild.setDisallowUnclaimedAccounts(enabled) — feature toggles',
+          'guild.setRolePositions(updates), guild.setRoleHoistPositions(updates), guild.resetRoleHoistPositions() — reorder roles',
+          'guild.createEmojisBulk(emojis), guild.createStickersBulk(stickers) — bulk create',
+        ],
+      },
+      {
+        title: 'SDK — GuildMemberManager',
+        items: ['guild.members.fetch(options?) — list members with pagination'],
+      },
+      {
+        title: 'SDK — GuildMember',
+        items: ['member.edit(options) — PATCH member (including @me for the bot)'],
+      },
+    ],
+  },
+  {
     version: '1.1.5',
     date: '2026-02-18',
     sections: [
