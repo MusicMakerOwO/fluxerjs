@@ -1,4 +1,8 @@
-import { parseRoleMention, resolvePermissionsToBitfield, type PermissionResolvable } from '@fluxerjs/util';
+import {
+  parseRoleMention,
+  resolvePermissionsToBitfield,
+  type PermissionResolvable,
+} from '@fluxerjs/util';
 import { FluxerAPIError } from '@fluxerjs/rest';
 import type { Client } from '../client/Client.js';
 import { Collection } from '@fluxerjs/collection';
@@ -151,9 +155,10 @@ export class Guild extends Base {
     const body: Record<string, unknown> = {};
     if (options.name !== undefined) body.name = options.name;
     if (options.permissions !== undefined) {
-      body.permissions = typeof options.permissions === 'string'
-        ? options.permissions
-        : resolvePermissionsToBitfield(options.permissions);
+      body.permissions =
+        typeof options.permissions === 'string'
+          ? options.permissions
+          : resolvePermissionsToBitfield(options.permissions);
     }
     if (options.color !== undefined) body.color = options.color;
     if (options.hoist !== undefined) body.hoist = options.hoist;

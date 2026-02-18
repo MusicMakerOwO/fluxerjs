@@ -1,10 +1,6 @@
 import { Collection } from '@fluxerjs/collection';
 import { Routes } from '@fluxerjs/types';
-import type {
-  APIUserPartial,
-  APIProfileResponse,
-  APIGuildMember,
-} from '@fluxerjs/types';
+import type { APIUserPartial, APIProfileResponse, APIGuildMember } from '@fluxerjs/types';
 import type { Client } from './Client.js';
 import { User } from '../structures/User.js';
 import { GuildMember } from '../structures/GuildMember.js';
@@ -98,11 +94,7 @@ export class UsersManager extends Collection<string, User> {
     if (memberData && guildId) {
       const guild = this.client.guilds.get(guildId) ?? (await this.client.guilds.fetch(guildId));
       if (guild) {
-        member = new GuildMember(
-          this.client,
-          { ...memberData, guild_id: guildId },
-          guild,
-        );
+        member = new GuildMember(this.client, { ...memberData, guild_id: guildId }, guild);
         guild.members.set(member.id, member);
       }
     }

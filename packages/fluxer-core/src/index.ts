@@ -1,10 +1,7 @@
 export { Client, type ClientEvents, type ClientEventMethods } from './client/Client.js';
 export { ChannelManager } from './client/ChannelManager.js';
 export { GuildMemberManager } from './client/GuildMemberManager.js';
-export {
-  UsersManager,
-  type FetchedUserWithProfile,
-} from './client/UsersManager.js';
+export { UsersManager, type FetchedUserWithProfile } from './client/UsersManager.js';
 export { MessageManager } from './client/MessageManager.js';
 export { ClientUser } from './client/ClientUser.js';
 export { Base } from './structures/Base.js';
