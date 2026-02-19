@@ -31,8 +31,7 @@ export const useVersionStore = defineStore('version', () => {
   async function loadVersions() {
     if (versionsLoaded.value) return;
     try {
-      const base = import.meta.env.BASE_URL || '/';
-      const res = await fetch(`${base}docs/versions.json`);
+      const res = await fetch('/docs/versions.json');
       if (!res.ok) throw new Error('Failed to load versions');
       const data = (await res.json()) as VersionsManifest;
       availableVersions.value = data.versions ?? [];

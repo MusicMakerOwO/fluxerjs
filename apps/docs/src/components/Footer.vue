@@ -32,8 +32,7 @@ const version = ref('1.1.0');
 
 onMounted(async () => {
   try {
-    const base = import.meta.env.BASE_URL || '/';
-    const res = await fetch(`${base}docs/versions.json`);
+    const res = await fetch('/docs/versions.json');
     if (res.ok) {
       const data = (await res.json()) as { latest?: string };
       if (data.latest) version.value = data.latest;

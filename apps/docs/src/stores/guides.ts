@@ -20,9 +20,8 @@ export const useGuidesStore = defineStore('guides', () => {
     loading.value = true;
     error.value = null;
     try {
-      const base = import.meta.env.BASE_URL || '/';
       const versionPath = versionKey === 'latest' ? 'latest' : `v${versionKey}`;
-      const url = `${base}docs/${versionPath}/guides.json`;
+      const url = `/docs/${versionPath}/guides.json`;
       const res = await fetch(url);
       if (!res.ok) throw new Error(`Failed to load guides: ${res.status}`);
       guidesData.value = (await res.json()) as Guide[];

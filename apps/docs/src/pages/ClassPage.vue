@@ -43,6 +43,12 @@
       </a>
     </nav>
   </div>
+  <div v-else-if="store.loading" class="loading">
+    <p>Loading...</p>
+  </div>
+  <div v-else-if="store.error" class="error">
+    <p>Failed to load docs: {{ store.error }}</p>
+  </div>
   <div v-else class="not-found">
     <p>Class not found.</p>
   </div>
@@ -247,7 +253,12 @@ h1 {
   margin-bottom: 1.5rem;
 }
 
+.loading,
 .not-found {
   color: var(--text-muted);
+}
+
+.error {
+  color: var(--text-error, #dc2626);
 }
 </style>

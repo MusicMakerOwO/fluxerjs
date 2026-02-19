@@ -22,9 +22,9 @@ export const useDocsStore = defineStore('docs', () => {
     loading.value = true;
     error.value = null;
     try {
-      const base = import.meta.env.BASE_URL || '/';
+      // Use root-relative path so fetch works on direct load/reload from any route
       const versionPath = versionKey === 'latest' ? 'latest' : `v${versionKey}`;
-      const url = `${base}docs/${versionPath}/main.json`;
+      const url = `/docs/${versionPath}/main.json`;
       const res = await fetch(url);
       if (!res.ok) throw new Error(`Failed to load docs: ${res.status}`);
       const data = (await res.json()) as DocOutput;
