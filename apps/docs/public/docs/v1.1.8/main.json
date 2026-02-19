@@ -2,7 +2,7 @@
   "meta": {
     "generator": "fluxer-docgen",
     "version": "1",
-    "date": 1771405375642
+    "date": 1771459933992
   },
   "package": "@fluxerjs/core",
   "version": "1.1.8",
@@ -719,6 +719,28 @@
       ],
       "methods": [
         {
+          "name": "assertEmojiInGuild",
+          "params": [
+            {
+              "name": "emojiId",
+              "type": "string",
+              "optional": false
+            },
+            {
+              "name": "guildId",
+              "type": "string",
+              "optional": false
+            }
+          ],
+          "returns": "Promise<void>",
+          "description": "Asserts that a custom emoji (by id) belongs to the given guild.\nUsed when reacting in guild channels to reject emojis from other servers.",
+          "async": true,
+          "source": {
+            "file": "Client.ts",
+            "line": 240
+          }
+        },
+        {
           "name": "destroy",
           "params": [],
           "returns": "Promise<void>",
@@ -726,7 +748,7 @@
           "async": true,
           "source": {
             "file": "Client.ts",
-            "line": 384
+            "line": 419
           }
         },
         {
@@ -737,7 +759,7 @@
           "async": true,
           "source": {
             "file": "Client.ts",
-            "line": 222
+            "line": 257
           }
         },
         {
@@ -765,7 +787,7 @@
           "deprecated": "Use channel.messages.fetch(messageId). For IDs-only: (await client.channels.fetch(channelId))?.messages?.fetch(messageId)",
           "source": {
             "file": "Client.ts",
-            "line": 237
+            "line": 272
           }
         },
         {
@@ -782,7 +804,7 @@
           "async": false,
           "source": {
             "file": "Client.ts",
-            "line": 263
+            "line": 298
           }
         },
         {
@@ -798,7 +820,7 @@
           "async": true,
           "source": {
             "file": "Client.ts",
-            "line": 289
+            "line": 324
           }
         },
         {
@@ -809,7 +831,7 @@
           "async": false,
           "source": {
             "file": "Client.ts",
-            "line": 398
+            "line": 433
           }
         },
         {
@@ -827,7 +849,7 @@
           "async": true,
           "source": {
             "file": "Client.ts",
-            "line": 304
+            "line": 339
           }
         },
         {
@@ -847,11 +869,11 @@
             }
           ],
           "returns": "Promise<string>",
-          "description": "Resolve an emoji argument to the API format (unicode or \"name:id\").\nSupports: <:name:id>, :name:, name:id, { name, id }, unicode.\nWhen id is missing (e.g. :name:), fetches guild emojis if guildId provided.",
+          "description": "Resolve an emoji argument to the API format (unicode or \"name:id\").\nSupports: <:name:id>, :name:, name:id, { name, id }, unicode.\nWhen id is missing (e.g. :name:), fetches guild emojis if guildId provided.\nWhen reacting in a guild channel, custom emojis must be from that guild.",
           "async": true,
           "source": {
             "file": "Client.ts",
-            "line": 183
+            "line": 189
           }
         },
         {
@@ -873,7 +895,7 @@
           "async": true,
           "source": {
             "file": "Client.ts",
-            "line": 252
+            "line": 287
           }
         },
         {
@@ -897,13 +919,13 @@
           "async": false,
           "source": {
             "file": "Client.ts",
-            "line": 285
+            "line": 320
           }
         }
       ],
       "source": {
         "file": "Client.ts",
-        "line": 139,
+        "line": 144,
         "path": "packages/fluxer-core/src/client/Client.ts"
       },
       "package": "@fluxerjs/core"
@@ -3809,7 +3831,7 @@
           "async": false,
           "source": {
             "file": "LiveKitRtcConnection.ts",
-            "line": 260
+            "line": 264
           }
         },
         {
@@ -3833,7 +3855,7 @@
           "async": true,
           "source": {
             "file": "LiveKitRtcConnection.ts",
-            "line": 312
+            "line": 316
           }
         },
         {
@@ -3854,7 +3876,7 @@
           "async": false,
           "source": {
             "file": "LiveKitRtcConnection.ts",
-            "line": 256
+            "line": 260
           }
         },
         {
@@ -3865,7 +3887,7 @@
           "async": false,
           "source": {
             "file": "LiveKitRtcConnection.ts",
-            "line": 1540
+            "line": 1558
           }
         },
         {
@@ -3876,7 +3898,7 @@
           "async": false,
           "source": {
             "file": "LiveKitRtcConnection.ts",
-            "line": 1527
+            "line": 1545
           }
         },
         {
@@ -3892,7 +3914,7 @@
           "async": false,
           "source": {
             "file": "LiveKitRtcConnection.ts",
-            "line": 266
+            "line": 270
           }
         },
         {
@@ -3903,7 +3925,7 @@
           "async": false,
           "source": {
             "file": "LiveKitRtcConnection.ts",
-            "line": 294
+            "line": 298
           }
         },
         {
@@ -3914,7 +3936,7 @@
           "async": false,
           "source": {
             "file": "LiveKitRtcConnection.ts",
-            "line": 274
+            "line": 278
           }
         },
         {
@@ -3938,7 +3960,7 @@
           "async": false,
           "source": {
             "file": "LiveKitRtcConnection.ts",
-            "line": 283
+            "line": 287
           }
         },
         {
@@ -3956,7 +3978,7 @@
           "async": true,
           "source": {
             "file": "LiveKitRtcConnection.ts",
-            "line": 1316
+            "line": 1334
           }
         },
         {
@@ -3972,7 +3994,7 @@
           "async": false,
           "source": {
             "file": "LiveKitRtcConnection.ts",
-            "line": 298
+            "line": 302
           }
         },
         {
@@ -3999,7 +4021,7 @@
           "async": true,
           "source": {
             "file": "LiveKitRtcConnection.ts",
-            "line": 380
+            "line": 384
           }
         },
         {
@@ -4021,7 +4043,7 @@
           "async": true,
           "source": {
             "file": "LiveKitRtcConnection.ts",
-            "line": 956
+            "line": 961
           }
         },
         {
@@ -4038,7 +4060,7 @@
           "async": false,
           "source": {
             "file": "LiveKitRtcConnection.ts",
-            "line": 289
+            "line": 293
           }
         },
         {
@@ -4049,7 +4071,7 @@
           "async": false,
           "source": {
             "file": "LiveKitRtcConnection.ts",
-            "line": 1511
+            "line": 1529
           }
         },
         {
@@ -4059,13 +4081,13 @@
           "async": false,
           "source": {
             "file": "LiveKitRtcConnection.ts",
-            "line": 1484
+            "line": 1502
           }
         }
       ],
       "source": {
         "file": "LiveKitRtcConnection.ts",
-        "line": 219,
+        "line": 223,
         "path": "packages/voice/src/LiveKitRtcConnection.ts"
       },
       "package": "@fluxerjs/voice"
@@ -6743,7 +6765,7 @@
           "async": false,
           "source": {
             "file": "VoiceManager.ts",
-            "line": 422
+            "line": 421
           }
         },
         {
@@ -6851,7 +6873,7 @@
           "async": false,
           "source": {
             "file": "VoiceManager.ts",
-            "line": 370
+            "line": 369
           }
         },
         {
@@ -6869,7 +6891,7 @@
           "async": false,
           "source": {
             "file": "VoiceManager.ts",
-            "line": 397
+            "line": 396
           }
         },
         {
@@ -6956,7 +6978,7 @@
           "async": false,
           "source": {
             "file": "VoiceManager.ts",
-            "line": 441
+            "line": 438
           }
         },
         {
@@ -7248,7 +7270,7 @@
           "async": true,
           "source": {
             "file": "WebSocketManager.ts",
-            "line": 30
+            "line": 38
           }
         },
         {
@@ -7258,7 +7280,7 @@
           "async": false,
           "source": {
             "file": "WebSocketManager.ts",
-            "line": 91
+            "line": 118
           }
         },
         {
@@ -7268,7 +7290,7 @@
           "async": false,
           "source": {
             "file": "WebSocketManager.ts",
-            "line": 97
+            "line": 125
           }
         },
         {
@@ -7289,13 +7311,13 @@
           "async": false,
           "source": {
             "file": "WebSocketManager.ts",
-            "line": 87
+            "line": 114
           }
         }
       ],
       "source": {
         "file": "WebSocketManager.ts",
-        "line": 19,
+        "line": 26,
         "path": "packages/ws/src/WebSocketManager.ts"
       },
       "package": "@fluxerjs/ws"
@@ -9980,7 +10002,7 @@
       "properties": [],
       "source": {
         "file": "Client.ts",
-        "line": 122,
+        "line": 127,
         "path": "packages/fluxer-core/src/client/Client.ts"
       },
       "package": "@fluxerjs/core"
@@ -10250,7 +10272,7 @@
       ],
       "source": {
         "file": "Client.ts",
-        "line": 49,
+        "line": 54,
         "path": "packages/fluxer-core/src/client/Client.ts"
       },
       "package": "@fluxerjs/core"
@@ -13359,6 +13381,13 @@
           "description": "Max framerate for encoding (default: 60)."
         },
         {
+          "name": "resolution",
+          "type": "\"480p\" | \"720p\" | \"1080p\" | \"1440p\" | \"4k\"",
+          "readonly": false,
+          "optional": true,
+          "description": "Output resolution. When set, overrides width/height and maxFramerate. FFmpeg path only."
+        },
+        {
           "name": "source",
           "type": "\"camera\" | \"screenshare\"",
           "readonly": false,
@@ -13389,7 +13418,7 @@
       ],
       "source": {
         "file": "LiveKitRtcConnection.ts",
-        "line": 191,
+        "line": 193,
         "path": "packages/voice/src/LiveKitRtcConnection.ts"
       },
       "package": "@fluxerjs/voice"
@@ -13653,7 +13682,7 @@
       ],
       "source": {
         "file": "WebSocketManager.ts",
-        "line": 8,
+        "line": 15,
         "path": "packages/ws/src/WebSocketManager.ts"
       },
       "package": "@fluxerjs/ws"
