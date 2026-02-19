@@ -1,4 +1,3 @@
-import { createRouter, createWebHistory } from 'vue-router';
 import Home from './pages/Home.vue';
 import Changelog from './pages/Changelog.vue';
 import NotFound from './pages/NotFound.vue';
@@ -12,9 +11,7 @@ import TypedefPage from './pages/TypedefPage.vue';
 import ApiReferenceLayout from './pages/ApiReferenceLayout.vue';
 import ApiReferencePage from './pages/ApiReferencePage.vue';
 
-const router = createRouter({
-  history: createWebHistory(),
-  routes: [
+export const routes = [
     { path: '/', name: 'home', component: Home },
     { path: '/changelog', name: 'changelog', component: Changelog },
     { path: '/guides', redirect: '/v/latest/guides' },
@@ -25,7 +22,7 @@ const router = createRouter({
       path: '/v/:version',
       component: VersionLayout,
       children: [
-        { path: '', redirect: (to) => `/v/${to.params.version}/guides` },
+        { path: '', redirect: ((to: { params: { version?: string } }) => `/v/${to.params.version}/guides`) as import('vue-router').RouteRecordRedirectOption },
         {
           path: 'guides',
           component: GuidesLayout,
@@ -41,7 +38,7 @@ const router = createRouter({
             {
               path: '',
               name: 'docs',
-              redirect: (to) => ({ name: 'classes', params: { ...to.params } }),
+              redirect: ((to: { params: Record<string, string | string[] | undefined> }) => ({ name: 'classes', params: { ...to.params } })) as import('vue-router').RouteRecordRedirectOption,
             },
             {
               path: 'classes',
@@ -65,7 +62,4 @@ const router = createRouter({
       ],
     },
     { path: '/:pathMatch(.*)*', name: 'not-found', component: NotFound },
-  ],
-});
-
-export default router;
+  ];

@@ -15,21 +15,30 @@ export const useDocsStore = defineStore('docs', () => {
 
   /**
    * Load docs for a specific version. Uses versioned path: docs/{version}/main.json
-   * so each version is a separate file and only loaded when needed.
+   * During SSG: reads from disk. On client: fetches.
    */
   async function loadDocs(versionKey: DocsVersionKey) {
     if (docsData.value && loadedVersion.value === versionKey) return;
     loading.value = true;
     error.value = null;
     try {
-      // Use root-relative path so fetch works on direct load/reload from any route
       const versionPath = versionKey === 'latest' ? 'latest' : `v${versionKey}`;
-      const url = `/docs/${versionPath}/main.json`;
-      const res = await fetch(url);
-      if (!res.ok) throw new Error(`Failed to load docs: ${res.status}`);
-      const data = (await res.json()) as DocOutput;
-      docsData.value = data;
-      loadedVersion.value = versionKey;
+
+      if (import.meta.env.SSR) {
+        const { readFileSync } = await import('fs');
+        const { resolve } = await import('path');
+        const path = resolve(process.cwd(), 'public/docs', versionPath, 'main.json');
+        const data = JSON.parse(readFileSync(path, 'utf-8')) as DocOutput;
+        docsData.value = data;
+        loadedVersion.value = versionKey;
+      } else {
+        const url = `/docs/${versionPath}/main.json`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`Failed to load docs: ${res.status}`);
+        const data = (await res.json()) as DocOutput;
+        docsData.value = data;
+        loadedVersion.value = versionKey;
+      }
     } catch (e) {
       error.value = e instanceof Error ? e.message : String(e);
       throw e;

@@ -53,6 +53,7 @@
         </span>
       </button>
     </header>
+    <SponsorBanner />
     <Transition name="mobile-menu">
       <div v-if="mobileMenuOpen" class="mobile-menu-overlay" @click="mobileMenuOpen = false">
         <nav class="mobile-menu" aria-label="Mobile navigation" @click.stop>
@@ -129,6 +130,7 @@ import VersionPicker from './components/VersionPicker.vue';
 import SearchBar from './components/SearchBar.vue';
 import FluxerLogo from './components/FluxerLogo.vue';
 import Footer from './components/Footer.vue';
+import SponsorBanner from './components/SponsorBanner.vue';
 
 const route = useRoute();
 const mobileMenuOpen = ref(false);

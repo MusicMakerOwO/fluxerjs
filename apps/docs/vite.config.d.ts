@@ -1,2 +1,7 @@
-declare const _default: import('vite').UserConfig;
-export default _default;
+import type { ViteSSGOptions } from 'vite-ssg';
+
+declare module 'vite' {
+  interface UserConfig {
+    ssgOptions?: Partial<ViteSSGOptions>;
+  }
+}

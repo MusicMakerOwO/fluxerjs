@@ -8,9 +8,8 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "paths": {
-      "~/*": ["./src/*"]
-    }
+    "types": ["node"],
+    "paths": { "~/*": ["./src/*"] }
   },
   "include": ["src/**/*.ts", "src/**/*.vue"],
   "references": [{ "path": "./tsconfig.node.json" }]
