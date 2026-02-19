@@ -10,12 +10,15 @@
  */
 import { writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { join } from 'node:path';
+import { basename, dirname, join } from 'node:path';
 
-const require = createRequire(join(process.cwd(), 'package.json'));
+const cwd = process.cwd();
+// Turbo/pnpm run build from packages/util, so cwd may be repo root OR packages/util
+const repoRoot =
+  basename(cwd) === 'util' && basename(dirname(cwd)) === 'packages' ? join(cwd, '../..') : cwd;
+const utilPath = join(repoRoot, 'packages/util');
+const require = createRequire(join(repoRoot, 'package.json'));
 
-// Resolve emojilib from util package (devDep) so script works when run from repo root
-const utilPath = join(process.cwd(), 'packages/util');
 const emojilibPath = require.resolve('emojilib', { paths: [utilPath] });
 // emojilib: emoji → [keywords]. node-emoji uses emojilib.
 const emojilibData = require(emojilibPath) as Record<string, string[]>;
@@ -50,6 +53,6 @@ const output = `/**
 export const UNICODE_EMOJI_SHORTCODES: Record<string, string> = ${JSON.stringify(map, null, 0)};
 `;
 
-const outPath = join(process.cwd(), 'packages/util/src/emojiShortcodes.generated.ts');
+const outPath = join(utilPath, 'src/emojiShortcodes.generated.ts');
 writeFileSync(outPath, output, 'utf8');
 console.log(`Wrote ${outPath} (${Object.keys(map).length} shortcodes)`);
