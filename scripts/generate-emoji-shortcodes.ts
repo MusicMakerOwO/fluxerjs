@@ -1,58 +1,56 @@
 #!/usr/bin/env node
 /**
- * Generate shortcode→unicode map from emojilib (same data source as node-emoji).
+ * Generate shortcode→unicode map from Discord's emoji data (anyascii/discord-emojis).
+ * Fluxer is Discord-compatible, so we use Discord's official shortcodes.
  * Run: pnpm exec tsx scripts/generate-emoji-shortcodes.ts
  *
- * emojilib format: { "😀": ["grinning_face", "face", "smile", ...], ... }
- * We invert to: { "grinning_face": "😀", "face": "😀", ... }
- *
- * Manual overrides for aliases not in emojilib (e.g. light_blue_heart → 💙).
+ * Source: https://github.com/anyascii/discord-emojis
+ * Format: { "emojis": [ { "names": ["arrow_backward"], "surrogates": "⬅️" }, ... ] }
  */
 import { writeFileSync } from 'node:fs';
-import { createRequire } from 'node:module';
 import { basename, dirname, join } from 'node:path';
 
 const cwd = process.cwd();
-// Turbo/pnpm run build from packages/util, so cwd may be repo root OR packages/util
 const repoRoot =
   basename(cwd) === 'util' && basename(dirname(cwd)) === 'packages' ? join(cwd, '../..') : cwd;
 const utilPath = join(repoRoot, 'packages/util');
-const require = createRequire(join(repoRoot, 'package.json'));
 
-const emojilibPath = require.resolve('emojilib', { paths: [utilPath] });
-// emojilib: emoji → [keywords]. node-emoji uses emojilib.
-const emojilibData = require(emojilibPath) as Record<string, string[]>;
+const DISCORD_EMOJIS_URL =
+  'https://raw.githubusercontent.com/anyascii/discord-emojis/master/discord-emojis.json';
 
-const map: Record<string, string> = {};
+async function fetchDiscordEmojis(): Promise<{ emojis: Array<{ names: string[]; surrogates: string }> }> {
+  const res = await fetch(DISCORD_EMOJIS_URL);
+  if (!res.ok) throw new Error(`Failed to fetch discord-emojis: ${res.status}`);
+  return res.json();
+}
 
-for (const [emoji, keywords] of Object.entries(emojilibData)) {
-  if (!Array.isArray(keywords)) continue;
-  for (const kw of keywords) {
-    // Skip invalid shortcodes: colons, too short, or non-word chars
-    const normalized = String(kw).replace(/\s+/g, '_').trim();
-    if (normalized.length < 2 || /[:()]/.test(normalized)) continue;
-    // Only allow snake_case / word chars for :name: format
-    if (!/^[\w_]+$/.test(normalized)) continue;
-    map[normalized.toLowerCase()] = emoji;
+async function main() {
+  const data = await fetchDiscordEmojis();
+  const map: Record<string, string> = {};
+
+  for (const entry of data.emojis) {
+    const { names, surrogates } = entry;
+    if (!Array.isArray(names) || !surrogates) continue;
+    for (const name of names) {
+      const normalized = String(name).replace(/\s+/g, '_').trim().toLowerCase();
+      if (normalized.length < 2 || !/^[\w_]+$/.test(normalized)) continue;
+      map[normalized] = surrogates;
+    }
   }
-}
 
-// Manual overrides: aliases not in emojilib (e.g. Slack/GitHub use light_blue_heart)
-const overrides: Record<string, string> = {
-  light_blue_heart: '💙',
-};
-
-for (const [shortcode, emoji] of Object.entries(overrides)) {
-  map[shortcode.toLowerCase()] = emoji;
-}
-
-const output = `/**
- * Auto-generated from emojilib (same source as node-emoji).
+  const output = `/**
+ * Auto-generated from Discord's emoji data (anyascii/discord-emojis).
  * Run: pnpm exec tsx scripts/generate-emoji-shortcodes.ts
  */
 export const UNICODE_EMOJI_SHORTCODES: Record<string, string> = ${JSON.stringify(map, null, 0)};
 `;
 
-const outPath = join(utilPath, 'src/emojiShortcodes.generated.ts');
-writeFileSync(outPath, output, 'utf8');
-console.log(`Wrote ${outPath} (${Object.keys(map).length} shortcodes)`);
+  const outPath = join(utilPath, 'src/emojiShortcodes.generated.ts');
+  writeFileSync(outPath, output, 'utf8');
+  console.log(`Wrote ${outPath} (${Object.keys(map).length} shortcodes)`);
+}
+
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

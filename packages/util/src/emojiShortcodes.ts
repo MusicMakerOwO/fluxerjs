@@ -1,10 +1,10 @@
 /**
  * Maps Unicode emoji shortcodes (:name:) to their Unicode characters.
- * Used to resolve shortcodes like :red_square: and :light_blue_heart: for message.react()
+ * Used to resolve shortcodes like :arrow_backward: and :flag_ad: for message.react()
  * without requiring guild context. Custom emojis use guild lookup; known Unicode shortcodes
  * resolve here so they work in DMs and guild channels alike.
  *
- * Data is generated from emojilib (same source as node-emoji).
+ * Data is generated from Discord's emoji data (anyascii/discord-emojis).
  * Run: pnpm exec tsx scripts/generate-emoji-shortcodes.ts
  */
 import { UNICODE_EMOJI_SHORTCODES as SHORTCODES } from './emojiShortcodes.generated.js';
