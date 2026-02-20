@@ -2,7 +2,7 @@
   "meta": {
     "generator": "fluxer-docgen",
     "version": "1",
-    "date": 1771602083044
+    "date": 1771602224024
   },
   "package": "@fluxerjs/core",
   "version": "1.2.1",
@@ -3597,7 +3597,7 @@
           "discordJsCompat": "https://discord.js.org/docs/packages/discord.js/main/GuildMemberRoleManager",
           "source": {
             "file": "GuildMemberRoleManager.ts",
-            "line": 72
+            "line": 75
           }
         },
         {
@@ -3614,7 +3614,7 @@
           "async": false,
           "source": {
             "file": "GuildMemberRoleManager.ts",
-            "line": 43
+            "line": 46
           }
         },
         {
@@ -3632,7 +3632,7 @@
           "discordJsCompat": "https://discord.js.org/docs/packages/discord.js/main/GuildMemberRoleManager",
           "source": {
             "file": "GuildMemberRoleManager.ts",
-            "line": 87
+            "line": 90
           }
         },
         {
@@ -3650,7 +3650,7 @@
           "discordJsCompat": "https://discord.js.org/docs/packages/discord.js/main/GuildMemberRoleManager",
           "source": {
             "file": "GuildMemberRoleManager.ts",
-            "line": 103
+            "line": 106
           }
         }
       ],
