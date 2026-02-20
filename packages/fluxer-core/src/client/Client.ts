@@ -29,13 +29,7 @@ import type {
   GatewayPresenceUpdateDispatchData,
   GatewayWebhooksUpdateDispatchData,
 } from '@fluxerjs/types';
-import type {
-  APIChannel,
-  APIGuild,
-  APIUser,
-  APIUserPartial,
-  APIInstance,
-} from '@fluxerjs/types';
+import type { APIChannel, APIGuild, APIUser, APIUserPartial, APIInstance } from '@fluxerjs/types';
 import {
   emitDeprecationWarning,
   formatEmoji,
@@ -393,7 +387,10 @@ export class Client extends EventEmitter {
             const channel = Channel.from(this, ch);
             if (channel) {
               this.channels.set(channel.id, channel);
-              guild.channels.set(channel.id, channel as import('../structures/Channel.js').GuildChannel);
+              guild.channels.set(
+                channel.id,
+                channel as import('../structures/Channel.js').GuildChannel,
+              );
             }
           }
           if (withCh.voice_states?.length) {
@@ -438,9 +435,12 @@ export class Client extends EventEmitter {
    */
   assertReady(): asserts this is Client & { user: NonNullable<Client['user']> } {
     if (!this.isReady()) {
-      throw new FluxerError('Client is not ready yet. Wait for the Ready event before accessing client.user.', {
-        code: ErrorCodes.ClientNotReady,
-      });
+      throw new FluxerError(
+        'Client is not ready yet. Wait for the Ready event before accessing client.user.',
+        {
+          code: ErrorCodes.ClientNotReady,
+        },
+      );
     }
   }
 

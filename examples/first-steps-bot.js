@@ -50,9 +50,10 @@ client.on(Events.MessageCreate, async (message) => {
         await message.reply('Mention a user or leave empty for yourself: `!avatar @user`');
         return;
       }
-      const user = userId === message.author.id
-        ? message.author
-        : await client.users.fetch(userId).catch(() => null);
+      const user =
+        userId === message.author.id
+          ? message.author
+          : await client.users.fetch(userId).catch(() => null);
       if (!user) {
         await message.reply('Could not find that user.');
         return;

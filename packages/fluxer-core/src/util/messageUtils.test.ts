@@ -43,9 +43,7 @@ describe('buildSendBody', () => {
   it('uses attachments metadata when provided with files', () => {
     const result = buildSendBody({
       files: [{ name: 'a.txt', data: new Uint8Array() }],
-      attachments: [
-        { id: 0, filename: 'a.txt', title: 'My File', description: 'A file' },
-      ],
+      attachments: [{ id: 0, filename: 'a.txt', title: 'My File', description: 'A file' }],
     });
     expect(result.attachments).toEqual([
       { id: 0, filename: 'a.txt', title: 'My File', description: 'A file' },

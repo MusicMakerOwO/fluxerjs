@@ -87,5 +87,4 @@ withDefaults(
   font-size: 0.85em;
   opacity: 0.8;
 }
-
 </style>

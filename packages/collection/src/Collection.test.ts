@@ -93,13 +93,19 @@ describe('Collection', () => {
   });
 
   it('some returns true when any element matches', () => {
-    const coll = new Collection<string, number>([['a', 1], ['b', 2]]);
+    const coll = new Collection<string, number>([
+      ['a', 1],
+      ['b', 2],
+    ]);
     expect(coll.some((v) => v === 2)).toBe(true);
     expect(coll.some((v) => v === 99)).toBe(false);
   });
 
   it('every returns true when all match', () => {
-    const coll = new Collection<string, number>([['a', 1], ['b', 2]]);
+    const coll = new Collection<string, number>([
+      ['a', 1],
+      ['b', 2],
+    ]);
     expect(coll.every((v) => v > 0)).toBe(true);
     expect(coll.every((v) => v > 1)).toBe(false);
   });
@@ -119,7 +125,10 @@ describe('Collection', () => {
   });
 
   it('clone creates shallow copy', () => {
-    const coll = new Collection<string, number>([['a', 1], ['b', 2]]);
+    const coll = new Collection<string, number>([
+      ['a', 1],
+      ['b', 2],
+    ]);
     const clone = coll.clone();
     expect(clone.size).toBe(coll.size);
     expect(clone.get('a')).toBe(1);
@@ -129,7 +138,10 @@ describe('Collection', () => {
 
   it('concat merges collections', () => {
     const a = new Collection<string, number>([['x', 1]]);
-    const b = new Collection<string, number>([['y', 2], ['z', 3]]);
+    const b = new Collection<string, number>([
+      ['y', 2],
+      ['z', 3],
+    ]);
     const c = a.concat(b);
     expect(c.size).toBe(3);
     expect(c.get('x')).toBe(1);
@@ -157,7 +169,10 @@ describe('Collection', () => {
   });
 
   it('toString returns Collection(n)', () => {
-    const coll = new Collection<string, number>([['a', 1], ['b', 2]]);
+    const coll = new Collection<string, number>([
+      ['a', 1],
+      ['b', 2],
+    ]);
     expect(coll.toString()).toBe('Collection(2)');
   });
 });

@@ -66,7 +66,8 @@ FLUXER_BOT_TOKEN=your_token node your-bot.js`,
     id: 'basic-bot',
     slug: 'basic-bot',
     title: 'Basic Bot',
-    description: 'A minimal bot that responds to !ping with Pong. See examples/first-steps-bot.js for !hello, !avatar, !embed, !perms.',
+    description:
+      'A minimal bot that responds to !ping with Pong. See examples/first-steps-bot.js for !hello, !avatar, !embed, !perms.',
     category: 'getting-started',
     sections: [
       {

@@ -1,12 +1,14 @@
 import type { APIGuild, APIRole } from '@fluxerjs/types';
 
 /** Guild payload shape from Fluxer gateway (GUILD_CREATE, GUILD_UPDATE, READY). */
-type GatewayGuildPayload = APIGuild | {
-  id: string;
-  properties?: Record<string, unknown>;
-  roles?: APIRole[] | unknown;
-  [key: string]: unknown;
-};
+type GatewayGuildPayload =
+  | APIGuild
+  | {
+      id: string;
+      properties?: Record<string, unknown>;
+      roles?: APIRole[] | unknown;
+      [key: string]: unknown;
+    };
 
 /**
  * Normalize gateway guild payload to APIGuild shape.

@@ -65,9 +65,9 @@ describe('formatEmoji', () => {
   });
 
   it('formats animated custom emoji with a prefix', () => {
-    expect(
-      formatEmoji({ id: '123456789012345678', name: 'wiggle', animated: true }),
-    ).toBe('a:wiggle:123456789012345678');
+    expect(formatEmoji({ id: '123456789012345678', name: 'wiggle', animated: true })).toBe(
+      'a:wiggle:123456789012345678',
+    );
   });
 
   it('encodes unicode emoji for API (id null)', () => {

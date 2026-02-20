@@ -70,7 +70,11 @@ export class ChannelManager extends Collection<string, Channel> {
       this.set(channel.id, channel);
       if ('guildId' in channel && channel.guildId) {
         const guild = this.client.guilds.get(channel.guildId);
-        if (guild) guild.channels.set(channel.id, channel as import('../structures/Channel.js').GuildChannel);
+        if (guild)
+          guild.channels.set(
+            channel.id,
+            channel as import('../structures/Channel.js').GuildChannel,
+          );
       }
       return channel;
     } catch (err) {

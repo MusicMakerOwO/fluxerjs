@@ -192,7 +192,8 @@ handlers.set('CHANNEL_UPDATE', async (client, d) => {
     client.channels.set(newCh.id, newCh);
     if ('guildId' in newCh && newCh.guildId) {
       const guild = client.guilds.get(newCh.guildId);
-      if (guild) guild.channels.set(newCh.id, newCh as import('../structures/Channel.js').GuildChannel);
+      if (guild)
+        guild.channels.set(newCh.id, newCh as import('../structures/Channel.js').GuildChannel);
     }
     client.emit(Events.ChannelUpdate, oldCh ?? newCh, newCh);
   }

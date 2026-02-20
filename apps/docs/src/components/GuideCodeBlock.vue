@@ -81,7 +81,9 @@ const activeTab = ref<'main' | 'alternate'>('main');
   border-bottom: 2px solid transparent;
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: color 0.15s, border-color 0.15s;
+  transition:
+    color 0.15s,
+    border-color 0.15s;
 }
 
 .code-tab:hover {
