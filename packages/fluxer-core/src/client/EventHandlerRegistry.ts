@@ -79,10 +79,6 @@ handlers.set('MESSAGE_REACTION_ADD', async (client, d) => {
     Events.MessageReactionAdd,
     reaction,
     user,
-    reaction.messageId,
-    reaction.channelId,
-    reaction.emoji,
-    user.id,
   );
 });
 
@@ -98,11 +94,7 @@ handlers.set('MESSAGE_REACTION_REMOVE', async (client, d) => {
   client.emit(
     Events.MessageReactionRemove,
     reaction,
-    user,
-    reaction.messageId,
-    reaction.channelId,
-    reaction.emoji,
-    user.id,
+    user
   );
 });
 
