@@ -16,3 +16,10 @@ openapi.json
 **/CHANGELOG.md
 
 webi-bot.js
+
+# IDE files
+.vscode
+.idea
+
+# OS files
+Thumbs.db

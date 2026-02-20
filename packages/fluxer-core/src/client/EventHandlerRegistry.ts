@@ -78,10 +78,6 @@ handlers.set('MESSAGE_REACTION_ADD', async (client, d) => {
     Events.MessageReactionAdd,
     reaction,
     user,
-    reaction.messageId,
-    reaction.channelId,
-    reaction.emoji,
-    user.id,
   );
 });
 
@@ -97,11 +93,7 @@ handlers.set('MESSAGE_REACTION_REMOVE', async (client, d) => {
   client.emit(
     Events.MessageReactionRemove,
     reaction,
-    user,
-    reaction.messageId,
-    reaction.channelId,
-    reaction.emoji,
-    user.id,
+    user
   );
 });
 
@@ -376,7 +368,7 @@ handlers.set('TYPING_START', async (client, d) => {
 handlers.set('USER_UPDATE', async (client, d) => {
   const data = d as GatewayUserUpdateDispatchData;
   if (client.user?.id === data.id) {
-    client.user._patch(data);
+    client.user!._patch(data);
   }
   client.emit(Events.UserUpdate, data);
 });

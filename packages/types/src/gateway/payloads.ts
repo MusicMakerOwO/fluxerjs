@@ -1,14 +1,16 @@
-import type { Snowflake } from '../common/snowflake.js';
-import type { APIUser } from '../api/user.js';
-import type { APIChannel } from '../api/channel.js';
-import type { APIGuild } from '../api/guild.js';
-import type { APIMessage } from '../api/message.js';
-import type { APIGuildMember } from '../api/user.js';
-import type { APIRole } from '../api/role.js';
-import type { APIInvite } from '../api/invite.js';
-import type { APIEmoji } from '../api/emoji.js';
-import type { APISticker } from '../api/sticker.js';
-import type { APIApplicationCommandInteraction } from '../api/interaction.js';
+import type { Snowflake } from '../common';
+import type {
+  APIUser,
+  APIChannel,
+  APIGuild,
+  APIMessage,
+  APIGuildMember,
+  APIInvite,
+  APIRole,
+  APIEmoji,
+  APISticker,
+} from '../api';
+import type { APIApplicationCommandInteraction } from '../api';
 import { GatewayOpcodes } from './opcodes.js';
 import type { GatewayDispatchEventName } from './events.js';
 
@@ -110,7 +112,7 @@ export interface GatewayMessageDeleteBulkDispatchData {
 
 /** Emoji data sent with reaction events (id is null for unicode emoji). */
 export interface GatewayReactionEmoji {
-  id: Snowflake | null;
+  id?: Snowflake;
   name: string;
   animated?: boolean;
 }
