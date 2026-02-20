@@ -20,12 +20,16 @@ import {
   GuildVerificationLevel,
   GuildMFALevel,
   GuildExplicitContentFilter,
-  DefaultMessageNotifications, APIBan, APIChannel, APIEmoji, APISticker,
+  DefaultMessageNotifications,
+  APIBan,
+  APIChannel,
+  APIEmoji,
+  APISticker,
 } from '@fluxerjs/types';
 import { GuildMemberManager } from '../client/GuildMemberManager.js';
 import { GuildMember } from './GuildMember.js';
 import { Role } from './Role.js';
-import  { Channel, GuildChannel } from './Channel.js';
+import { Channel, GuildChannel } from './Channel.js';
 import { CDN_URL } from '../util/Constants.js';
 import { Routes } from '@fluxerjs/types';
 import { Webhook } from './Webhook.js';
@@ -277,9 +281,9 @@ export class Guild extends Base {
    * @returns List of GuildBan objects
    */
   async fetchBans(): Promise<GuildBan[]> {
-    const data = await this.client.rest.get<
-      APIBan[] | { bans?: APIBan[] }
-    >(Routes.guildBans(this.id));
+    const data = await this.client.rest.get<APIBan[] | { bans?: APIBan[] }>(
+      Routes.guildBans(this.id),
+    );
     const list = Array.isArray(data) ? data : (data?.bans ?? []);
     return list.map((b) => new GuildBan(this.client, { ...b, guild_id: this.id }, this.id));
   }
@@ -586,15 +590,14 @@ export class Guild extends Base {
    * @param emojis - Array of { name, image } (base64), 1-50 emojis
    * @returns Array of created GuildEmoji objects
    */
-  async createEmojisBulk(
-    emojis: Array<{ name: string; image: string }>,
-  ): Promise<GuildEmoji[]> {
-    const data = await this.client.rest.post<
-      APIEmoji[] | { emojis?: APIEmoji[] }
-    >(Routes.guildEmojisBulk(this.id), {
-      body: { emojis },
-      auth: true,
-    });
+  async createEmojisBulk(emojis: Array<{ name: string; image: string }>): Promise<GuildEmoji[]> {
+    const data = await this.client.rest.post<APIEmoji[] | { emojis?: APIEmoji[] }>(
+      Routes.guildEmojisBulk(this.id),
+      {
+        body: { emojis },
+        auth: true,
+      },
+    );
     const list = Array.isArray(data) ? data : (data?.emojis ?? []);
     return list.map((e) => new GuildEmoji(this.client, { ...e, guild_id: this.id }, this.id));
   }
@@ -612,12 +615,13 @@ export class Guild extends Base {
       tags?: string[];
     }>,
   ): Promise<GuildSticker[]> {
-    const data = await this.client.rest.post<
-      APISticker[] | { stickers?: APISticker[] }
-    >(Routes.guildStickersBulk(this.id), {
-      body: { stickers },
-      auth: true,
-    });
+    const data = await this.client.rest.post<APISticker[] | { stickers?: APISticker[] }>(
+      Routes.guildStickersBulk(this.id),
+      {
+        body: { stickers },
+        auth: true,
+      },
+    );
     const list = Array.isArray(data) ? data : (data?.stickers ?? []);
     return list.map((s) => new GuildSticker(this.client, { ...s, guild_id: this.id }, this.id));
   }

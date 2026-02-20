@@ -70,8 +70,7 @@ export class GuildMemberManager extends Collection<string, GuildMember> {
     const qs = params.toString();
     const url = Routes.guildMembers(this.guild.id) + (qs ? `?${qs}` : '');
     const data = await this.guild.client.rest.get<
-      | APIGuildMember[]
-      | { members?: APIGuildMember[] }
+      APIGuildMember[] | { members?: APIGuildMember[] }
     >(url, { auth: true });
     const list = Array.isArray(data) ? data : (data?.members ?? []);
     const members: GuildMember[] = [];

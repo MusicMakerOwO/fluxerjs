@@ -58,9 +58,7 @@ export class ChannelManager extends Collection<string, Channel | GuildChannel> {
     if (cached) return cached;
 
     try {
-      const data = await this.client.rest.get<APIChannel>(
-        Routes.channel(channelId),
-      );
+      const data = await this.client.rest.get<APIChannel>(Routes.channel(channelId));
       const channel = Channel.fromOrCreate(this.client, data);
       if (!channel) {
         throw new FluxerError('Channel data invalid or unsupported type', {
@@ -70,11 +68,7 @@ export class ChannelManager extends Collection<string, Channel | GuildChannel> {
       this.set(channel.id, channel);
       if ('guildId' in channel) {
         const guild = this.client.guilds.get(channel.guildId);
-        if (guild)
-          guild.channels.set(
-            channel.id,
-            channel
-          );
+        if (guild) guild.channels.set(channel.id, channel);
       }
       return channel;
     } catch (err) {
@@ -102,10 +96,7 @@ export class ChannelManager extends Collection<string, Channel | GuildChannel> {
    * const channel = await client.channels.resolve(channelId);
    * const message = await channel?.messages?.fetch(messageId);
    */
-  async fetchMessage(
-    channelId: string,
-    messageId: string,
-  ): Promise<Message> {
+  async fetchMessage(channelId: string, messageId: string): Promise<Message> {
     emitDeprecationWarning(
       'ChannelManager.fetchMessage()',
       'Use channel.messages.fetch(messageId). Prefer (await client.channels.resolve(channelId))?.messages?.fetch(messageId).',
@@ -140,10 +131,7 @@ export class ChannelManager extends Collection<string, Channel | GuildChannel> {
    * await client.channels.send(channelId, { embeds: [embed] });
    * await client.channels.send(channelId, { content: 'Report', files: [{ name: 'log.txt', data }] });
    */
-  async send(
-    channelId: string,
-    payload: MessageSendOptions,
-  ): Promise<Message> {
+  async send(channelId: string, payload: MessageSendOptions): Promise<Message> {
     const opts = typeof payload === 'string' ? { content: payload } : payload;
     const body = buildSendBody(payload);
     const files = opts.files?.length ? await resolveMessageFiles(opts.files) : undefined;

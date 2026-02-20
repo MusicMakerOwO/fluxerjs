@@ -68,9 +68,7 @@ export class GuildManager extends Collection<string, Guild> {
     if (cached) return cached;
 
     try {
-      const data = await this.client.rest.get<APIGuild>(
-        Routes.guild(guildId),
-      );
+      const data = await this.client.rest.get<APIGuild>(Routes.guild(guildId));
       const guild = new Guild(this.client, data);
       this.set(guild.id, guild);
       return guild;

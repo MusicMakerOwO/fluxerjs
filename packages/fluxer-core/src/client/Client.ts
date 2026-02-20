@@ -65,10 +65,7 @@ import { Invite } from '../structures/Invite';
 export interface ClientEvents {
   [Events.Ready]: [];
   [Events.MessageCreate]: [message: Message];
-  [Events.MessageUpdate]: [
-    oldMessage: Message | null,
-    newMessage: Message,
-  ];
+  [Events.MessageUpdate]: [oldMessage: Message | null, newMessage: Message];
   [Events.MessageDelete]: [message: PartialMessage];
   [Events.MessageReactionAdd]: [
     reaction: MessageReaction,
@@ -88,9 +85,7 @@ export interface ClientEvents {
   ];
   [Events.MessageReactionRemoveAll]: [data: GatewayMessageReactionRemoveAllDispatchData];
   [Events.MessageReactionRemoveEmoji]: [data: GatewayMessageReactionRemoveEmojiDispatchData];
-  [Events.InteractionCreate]: [
-    interaction: APIApplicationCommandInteraction,
-  ];
+  [Events.InteractionCreate]: [interaction: APIApplicationCommandInteraction];
   [Events.GuildCreate]: [guild: Guild];
   [Events.GuildUpdate]: [oldGuild: Guild, newGuild: Guild];
   [Events.GuildDelete]: [guild: Guild];
@@ -98,19 +93,14 @@ export interface ClientEvents {
   [Events.ChannelUpdate]: [oldChannel: Channel, newChannel: Channel];
   [Events.ChannelDelete]: [channel: Channel];
   [Events.GuildMemberAdd]: [member: GuildMember];
-  [Events.GuildMemberUpdate]: [
-    oldMember: GuildMember,
-    newMember: GuildMember,
-  ];
+  [Events.GuildMemberUpdate]: [oldMember: GuildMember, newMember: GuildMember];
   [Events.GuildMemberRemove]: [member: GuildMember];
   [Events.VoiceStateUpdate]: [data: GatewayVoiceStateUpdateDispatchData];
   [Events.VoiceServerUpdate]: [data: GatewayVoiceServerUpdateDispatchData];
   [Events.VoiceStatesSync]: [
     data: { guildId: string; voiceStates: Array<{ user_id: string; channel_id: string | null }> },
   ];
-  [Events.MessageDeleteBulk]: [
-    data: GatewayMessageDeleteBulkDispatchData,
-  ];
+  [Events.MessageDeleteBulk]: [data: GatewayMessageDeleteBulkDispatchData];
   [Events.GuildBanAdd]: [ban: GuildBan];
   [Events.GuildBanRemove]: [ban: GuildBan];
   [Events.GuildEmojisUpdate]: [data: GatewayGuildEmojisUpdateDispatchData];
@@ -280,10 +270,7 @@ export class Client extends EventEmitter {
    * const channel = await client.channels.resolve(channelId);
    * const message = await channel?.messages?.fetch(messageId);
    */
-  async fetchMessage(
-    channelId: string,
-    messageId: string,
-  ): Promise<Message> {
+  async fetchMessage(channelId: string, messageId: string): Promise<Message> {
     emitDeprecationWarning(
       'Client.fetchMessage()',
       'Use channel.messages.fetch(messageId). For IDs-only: (await client.channels.resolve(channelId))?.messages?.fetch(messageId)',
@@ -401,10 +388,7 @@ export class Client extends EventEmitter {
             const channel = Channel.from(this, ch);
             if (channel) {
               this.channels.set(channel.id, channel);
-              guild.channels.set(
-                channel.id,
-                channel as GuildChannel,
-              );
+              guild.channels.set(channel.id, channel as GuildChannel);
             }
           }
           if (withCh.voice_states?.length) {

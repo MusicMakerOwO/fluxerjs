@@ -16,9 +16,9 @@ export class ClientUser extends User {
    * @returns Array of Guild objects (cached in client.guilds)
    */
   async fetchGuilds(): Promise<Guild[]> {
-    const data = await this.client.rest.get<
-      APIGuild[] | { guilds?: APIGuild[] }
-    >(Routes.currentUserGuilds());
+    const data = await this.client.rest.get<APIGuild[] | { guilds?: APIGuild[] }>(
+      Routes.currentUserGuilds(),
+    );
     const list = Array.isArray(data) ? data : (data?.guilds ?? []);
     const guilds: Guild[] = [];
     for (const g of list) {

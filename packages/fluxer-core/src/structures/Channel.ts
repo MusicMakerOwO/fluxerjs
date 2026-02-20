@@ -10,7 +10,9 @@ import {
   APIChannelPartial,
   APIChannelOverwrite,
   APIUser,
-  APIMessage, APIWebhook, APIInvite,
+  APIMessage,
+  APIWebhook,
+  APIInvite,
 } from '@fluxerjs/types';
 import { ChannelType, Routes } from '@fluxerjs/types';
 import { emitDeprecationWarning } from '@fluxerjs/util';

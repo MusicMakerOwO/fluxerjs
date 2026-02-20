@@ -328,10 +328,7 @@ export class Message extends Base {
     const qs = params.toString();
     const route =
       Routes.channelMessageReaction(this.channelId, this.id, emojiStr) + (qs ? `?${qs}` : '');
-    const data = await this.client.rest.get<
-      | { users?: APIUserPartial[] }
-      | APIUserPartial[]
-    >(route);
+    const data = await this.client.rest.get<{ users?: APIUserPartial[] } | APIUserPartial[]>(route);
     const list = Array.isArray(data) ? data : (data?.users ?? []);
     return list.map((u) => this.client.getOrCreateUser(u));
   }

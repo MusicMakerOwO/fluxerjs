@@ -3,7 +3,7 @@ import { APIGatewayBotResponse, GatewayPresenceUpdateData } from '@fluxerjs/type
 import { WebSocketShard } from './WebSocketShard.js';
 import { getDefaultWebSocket } from './utils/getWebSocket.js';
 
-import { WebSocketConstructor as WSConstructor } from "./WebSocketShard";
+import { WebSocketConstructor as WSConstructor } from './WebSocketShard';
 
 export type WebSocketConstructor = WSConstructor;
 

@@ -8,13 +8,11 @@ export {
 import { Client } from '@fluxerjs/core';
 import { VoiceChannel } from '@fluxerjs/core';
 import { VoiceManager } from './VoiceManager.js';
-import { VoiceConnection } from "./VoiceConnection";
+import { VoiceConnection } from './VoiceConnection';
 import { LiveKitRtcConnection } from './LiveKitRtcConnection';
 
 /** Union of connection types (Discord-style or LiveKit). */
-export type VoiceConnectionLike =
-  | VoiceConnection
-  | LiveKitRtcConnection;
+export type VoiceConnectionLike = VoiceConnection | LiveKitRtcConnection;
 
 /**
  * Create a voice manager and join a voice channel in one call.

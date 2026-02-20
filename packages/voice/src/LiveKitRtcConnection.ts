@@ -27,7 +27,7 @@ import { OpusDecoder } from 'opus-decoder';
 import { opus } from 'prism-media';
 import { promisify } from 'node:util';
 import { createFile } from 'mp4box';
-import * as WebCodecs from "node-webcodecs";
+import * as WebCodecs from 'node-webcodecs';
 
 const SAMPLE_RATE = 48000;
 const CHANNELS = 1;
