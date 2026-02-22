@@ -9,10 +9,7 @@ import {
   GatewayVoiceStateUpdateDispatchData,
 } from '@fluxerjs/types';
 import { VoiceConnection } from './VoiceConnection.js';
-import {
-  LiveKitRtcConnection,
-  type LiveKitReceiveSubscription,
-} from './LiveKitRtcConnection.js';
+import { LiveKitRtcConnection, type LiveKitReceiveSubscription } from './LiveKitRtcConnection.js';
 import { isLiveKitEndpoint } from './livekit.js';
 import { Collection } from '@fluxerjs/collection';
 
@@ -123,9 +120,7 @@ export class VoiceManager extends EventEmitter {
     const participants = this.listParticipantsInChannel(guildId, channelId).filter(
       (participantId) => participantId !== this.client.user?.id,
     );
-    return participants.map((participantId) =>
-      conn.subscribeParticipantAudio(participantId, opts),
-    );
+    return participants.map((participantId) => conn.subscribeParticipantAudio(participantId, opts));
   }
 
   private handleVoiceStateUpdate(data: GatewayVoiceStateUpdateDispatchData): void {

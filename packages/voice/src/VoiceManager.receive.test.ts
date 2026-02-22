@@ -16,7 +16,14 @@ describe('VoiceManager receive helpers', () => {
   it('lists participants in a channel from voice state map', () => {
     const manager = new VoiceManager(makeClient() as never);
 
-    manager.voiceStates.set('g1', new Map([['u1', 'c1'], ['u2', 'c1'], ['u3', 'c2']]));
+    manager.voiceStates.set(
+      'g1',
+      new Map([
+        ['u1', 'c1'],
+        ['u2', 'c1'],
+        ['u3', 'c2'],
+      ]),
+    );
 
     expect(manager.listParticipantsInChannel('g1', 'c1')).toEqual(['u1', 'u2']);
     expect(manager.listParticipantsInChannel('g1', 'missing')).toEqual([]);
@@ -32,7 +39,15 @@ describe('VoiceManager receive helpers', () => {
       .spyOn(conn, 'subscribeParticipantAudio')
       .mockImplementation((participantId) => ({ participantId, stop: vi.fn() }));
 
-    manager.voiceStates.set('g1', new Map([['bot', 'c1'], ['u1', 'c1'], ['u2', 'c1'], ['u3', 'c9']]));
+    manager.voiceStates.set(
+      'g1',
+      new Map([
+        ['bot', 'c1'],
+        ['u1', 'c1'],
+        ['u2', 'c1'],
+        ['u3', 'c9'],
+      ]),
+    );
     (manager as unknown as { connections: Map<string, LiveKitRtcConnection> }).connections.set(
       'c1',
       conn,
