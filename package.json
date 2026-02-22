@@ -33,6 +33,14 @@
     "publish:packages:all": "pnpm run build && pnpm -r publish --no-git-checks --filter '!./examples'"
   },
   "devDependencies": {
+    "@fluxerjs/builders": "workspace:*",
+    "@fluxerjs/collection": "workspace:*",
+    "@fluxerjs/core": "workspace:*",
+    "@fluxerjs/rest": "workspace:*",
+    "@fluxerjs/types": "workspace:*",
+    "@fluxerjs/util": "workspace:*",
+    "@fluxerjs/voice": "workspace:*",
+    "@fluxerjs/ws": "workspace:*",
     "@changesets/changelog-github": "^0.5.2",
     "@changesets/cli": "^2.29.8",
     "@eslint/js": "^10.0.1",
