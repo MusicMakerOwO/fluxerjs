@@ -35,4 +35,35 @@ describe('SnowflakeUtil', () => {
     const back = SnowflakeUtil.timestampFromSnowflake(snowflake);
     expect(Math.floor(back / 1000)).toBe(Math.floor(ts / 1000));
   });
+
+  it('dateFromSnowflake returns Date', () => {
+    const ts = 1609459200000;
+    const snowflake = SnowflakeUtil.snowflakeFromTimestamp(ts);
+    const date = SnowflakeUtil.dateFromSnowflake(snowflake);
+    expect(date).toBeInstanceOf(Date);
+    expect(date.getTime()).toBe(ts);
+  });
+
+  it('deconstruct returns correct component values', () => {
+    const sf = SnowflakeUtil.snowflakeFromTimestamp(1609459200000);
+    const d = SnowflakeUtil.deconstruct(sf);
+    expect(d.timestamp).toBe(1609459200000);
+    expect(d.date).toBeInstanceOf(Date);
+    expect(typeof d.workerId).toBe('number');
+    expect(typeof d.processId).toBe('number');
+    expect(typeof d.increment).toBe('number');
+  });
+
+  it('deconstruct throws for non-numeric string', () => {
+    expect(() => SnowflakeUtil.deconstruct('abc')).toThrow(TypeError);
+    expect(() => SnowflakeUtil.deconstruct('12.34')).toThrow(TypeError);
+  });
+
+  it('isValid rejects negative', () => {
+    expect(SnowflakeUtil.isValid('-123')).toBe(false);
+  });
+
+  it('isValid rejects too long', () => {
+    expect(SnowflakeUtil.isValid('1' + '0'.repeat(20))).toBe(false);
+  });
 });

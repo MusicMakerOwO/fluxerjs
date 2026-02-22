@@ -14,6 +14,8 @@ export interface ClientOptions {
   intents?: number;
   /** Suppress the warning when intents are set (Fluxer does not support intents yet). */
   suppressIntentWarning?: boolean;
+  /** When true, delay the Ready event until all guilds from READY (including unavailable) have been received via GUILD_CREATE. Default: false. */
+  waitForGuilds?: boolean;
   /** Cache size limits (channels, guilds, users). When exceeded, oldest entries are evicted. Omit or 0 = unbounded. */
   cache?: CacheSizeLimits;
   /** Initial presence (status, custom_status, etc.) sent on identify. Can also update via PresenceUpdate after connect. */

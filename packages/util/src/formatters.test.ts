@@ -32,4 +32,34 @@ describe('truncate', () => {
   it('truncates with suffix', () => {
     expect(truncate('hello world', 8)).toBe('hello...');
   });
+
+  it('uses custom suffix', () => {
+    expect(truncate('hello world', 9, '..')).toBe('hello w..');
+  });
+
+  it('handles exact length', () => {
+    expect(truncate('hello', 5)).toBe('hello');
+  });
+
+  it('handles length smaller than suffix', () => {
+    expect(truncate('hi', 1, '...')).toBe('...');
+  });
+});
+
+describe('escapeMarkdown edge cases', () => {
+  it('escapes backtick', () => {
+    expect(escapeMarkdown('`code`')).toBe('\\`code\\`');
+  });
+  it('escapes pipe', () => {
+    expect(escapeMarkdown('a|b')).toBe('a\\|b');
+  });
+  it('escapes tilde', () => {
+    expect(escapeMarkdown('~strikethrough~')).toBe('\\~strikethrough\\~');
+  });
+});
+
+describe('formatColor edge cases', () => {
+  it('pads short hex', () => {
+    expect(formatColor(0x000001)).toBe('#000001');
+  });
 });

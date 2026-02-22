@@ -39,3 +39,32 @@ describe('resolvePermissionsToBitfield', () => {
     expect(() => resolvePermissionsToBitfield('InvalidPermission')).toThrow(RangeError);
   });
 });
+
+describe('PermissionsBitField', () => {
+  it('has checks single permission', () => {
+    const bf = new PermissionsBitField([PermissionFlags.SendMessages]);
+    expect(bf.has(PermissionFlags.SendMessages)).toBe(true);
+    expect(bf.has(PermissionFlags.BanMembers)).toBe(false);
+  });
+
+  it('has checks Administrator flag', () => {
+    const bf = new PermissionsBitField([PermissionFlags.Administrator]);
+    expect(bf.has(PermissionFlags.Administrator)).toBe(true);
+    expect(bf.has(PermissionFlags.BanMembers)).toBe(false);
+  });
+
+  it('toArray returns permission names', () => {
+    const bf = new PermissionsBitField([PermissionFlags.SendMessages, PermissionFlags.ViewChannel]);
+    const arr = bf.toArray();
+    expect(arr).toContain('SendMessages');
+    expect(arr).toContain('ViewChannel');
+    expect(arr.length).toBe(2);
+  });
+
+  it('serialize returns permission object', () => {
+    const bf = new PermissionsBitField([PermissionFlags.BanMembers]);
+    const s = bf.serialize();
+    expect(s.BanMembers).toBe(true);
+    expect(s.SendMessages).toBe(false);
+  });
+});

@@ -175,4 +175,55 @@ describe('Collection', () => {
     ]);
     expect(coll.toString()).toBe('Collection(2)');
   });
+
+  it('first(0) and last(0) return empty array', () => {
+    const coll = new Collection<string, number>([
+      ['a', 1],
+      ['b', 2],
+    ]);
+    expect(coll.first(0)).toEqual([]);
+    expect(coll.last(0)).toEqual([]);
+  });
+
+  it('random(amount) returns requested count without duplicates', () => {
+    const coll = new Collection<string, number>([
+      ['a', 1],
+      ['b', 2],
+      ['c', 3],
+    ]);
+    const result = coll.random(2);
+    expect(result).toHaveLength(2);
+    expect(new Set(result).size).toBe(2);
+  });
+
+  it('random(amount) when amount exceeds size returns all', () => {
+    const coll = new Collection<string, number>([['a', 1], ['b', 2]]);
+    const result = coll.random(5);
+    expect(result).toHaveLength(2);
+  });
+
+  it('sort orders by compareFn', () => {
+    const coll = new Collection<string, number>([
+      ['c', 3],
+      ['a', 1],
+      ['b', 2],
+    ]);
+    coll.sort((a, b) => a - b);
+    expect(coll.toJSON()).toEqual([1, 2, 3]);
+  });
+
+  it('last returns undefined for empty', () => {
+    const coll = new Collection<string, number>();
+    expect(coll.last()).toBeUndefined();
+  });
+
+  it('every returns true for empty', () => {
+    const coll = new Collection<string, number>();
+    expect(coll.every(() => true)).toBe(true);
+  });
+
+  it('some returns false for empty', () => {
+    const coll = new Collection<string, number>();
+    expect(coll.some(() => true)).toBe(false);
+  });
 });

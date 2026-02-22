@@ -239,7 +239,7 @@ await client.login(process.env.FLUXER_BOT_TOKEN);`,
       {
         title: 'client.channels.resolve() — get channel by ID',
         description:
-          'Resolve a channel by ID from cache or API. Use channel.isSendable() before sending. For sending when you only have an ID, prefer client.channels.send() which skips the fetch.',
+          'Resolve a channel by ID from cache or API. Use channel.canSendMessage() or channel.isTextBased() before sending. For sending when you only have an ID, prefer client.channels.send() which skips the fetch.',
         code: `import { Client } from '@fluxerjs/core';
 
 const client = new Client({ intents: 0 });
@@ -247,7 +247,7 @@ await client.login(process.env.FLUXER_BOT_TOKEN);
 
 // Fetch channel (from API if not cached)
 const channel = await client.channels.resolve(channelId);
-if (channel?.isSendable()) {
+if (channel?.canSendMessage()) {
   await channel.send('Hello!');
 }
 // Or for webhooks: if (channel?.createWebhook) { ... }`,
@@ -271,7 +271,7 @@ if (msg) await msg.delete();
 
 // When channel is cached
 const m = client.channels.get(channelId);
-if (m?.isSendable()) {
+if (m?.canSendMessage()) {
   const mes = await m.messages.fetch(messageId);
   if (mes) await mes.edit({ content: 'Edited!' });
 }
@@ -282,16 +282,26 @@ if (updated) console.log(updated.content);`,
         language: 'javascript',
       },
       {
-        title: 'message.channel and message.guild',
+        title: 'message.channel and message.channel.send()',
         description:
-          'Access the channel or guild from a message. Resolved from cache; null if not cached (e.g. DM channel).',
+          'message.channel returns the channel (from cache); null if not cached. Messages only exist in text-based channels, so when non-null it always has send(). Use message.channel.send() for the same as message.send() but via the channel object.',
         code: `client.on(Events.MessageCreate, async (message) => {
-  const channel = message.channel;   // TextChannel or DMChannel | null
+  const channel = message.channel;   // TextChannel | DMChannel | GuildChannel | null
   const guild = message.guild;       // Guild | null (null for DMs)
-  if (message.channel?.isSendable()) {
-    await message.channel.send('Same channel, different API');
+  if (channel) {
+    await channel.send('Same channel, different API');  // or message.send()
   }
 });`,
+        language: 'javascript',
+      },
+      {
+        title: 'channel.canSendMessage() — permission check',
+        description:
+          'Before sending, use canSendMessage() to check if the bot has ViewChannel and SendMessages. For DMs always true; for guild channels uses guild.members.me permissions.',
+        code: `const channel = await client.channels.resolve(channelId);
+if (channel?.canSendMessage()) {
+  await channel.send('Hello!');
+}`,
         language: 'javascript',
       },
       {
@@ -299,7 +309,7 @@ if (updated) console.log(updated.content);`,
         description:
           'Use channel.sendTyping() before a slow operation so users see "Bot is typing...". Lasts ~10 seconds.',
         code: `const channel = message.channel ?? (await message.resolveChannel());
-if (channel?.isSendable?.()) {
+if (channel?.canSendMessage?.()) {
   await channel.sendTyping();
   await slowOperation(); // e.g. fetch external API
   await message.reply('Done!');
@@ -1268,6 +1278,47 @@ voiceManager.leave(guildId);`,
     ],
   },
   {
+    id: 'wait-for-guilds',
+    slug: 'wait-for-guilds',
+    title: 'Wait for All Guilds',
+    description:
+      'Delay the Ready event until all guilds have been received. Use when your bot needs the full guild cache before handling Ready.',
+    category: 'events',
+    sections: [
+      {
+        title: 'Overview',
+        description:
+          'By default, Ready fires as soon as the gateway sends the READY payload. Some guilds may be sent as unavailable stubs and arrive later via GUILD_CREATE. Enable waitForGuilds if your Ready handler needs every guild to be in client.guilds before proceeding.',
+      },
+      {
+        title: 'Usage',
+        description: 'Pass waitForGuilds: true in ClientOptions. Ready will emit only after all guilds from READY (including those marked unavailable) have been received via GUILD_CREATE.',
+        code: `import { Client, Events } from '@fluxerjs/core';
+
+const client = new Client({
+  waitForGuilds: true,
+});
+
+client.on(Events.Ready, () => {
+  // client.guilds now contains every guild — no stubs, all fully loaded
+  console.log(\`Bot is in \${client.guilds.size} guilds\`);
+  for (const [id, guild] of client.guilds) {
+    console.log(\`- \${guild.name} (\${guild.channels.size} channels)\`);
+  }
+});
+
+await client.login(process.env.FLUXER_BOT_TOKEN);`,
+        language: 'javascript',
+      },
+      {
+        title: 'When to use it',
+        description:
+          'Use waitForGuilds when your bot iterates over all guilds in Ready (e.g. syncing state, broadcasting announcements, or building in-memory caches). Without it, client.guilds may be incomplete at Ready time.',
+        tip: 'If you only need a few guilds by ID, prefer client.guilds.resolve(guildId) instead — no need to wait for all guilds.',
+      },
+    ],
+  },
+  {
     id: 'events',
     slug: 'events',
     title: 'Events',
@@ -1601,7 +1652,7 @@ perms.has(PermissionFlags.Administrator); // true
         description:
           'member.permissionsIn(channel) applies channel overwrites. Use it when checking if a user can send messages, read history, or connect to voice in a specific channel.',
         code: `const channel = message.channel;
-if (channel?.isSendable?.()) {
+if (channel?.canSendMessage?.()) {
   const perms = member.permissionsIn(channel);
   if (perms.has(PermissionFlags.SendMessages)) {
     await channel.send('You can send here!');

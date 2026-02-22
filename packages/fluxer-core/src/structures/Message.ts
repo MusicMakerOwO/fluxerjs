@@ -15,7 +15,7 @@ import {
 import { MessageType, Routes } from '@fluxerjs/types';
 import { EmbedBuilder } from '@fluxerjs/builders';
 import { User } from './User.js';
-import { Channel } from './Channel.js';
+import { Channel, TextChannel, DMChannel, GuildChannel } from './Channel.js';
 import { Guild } from './Guild.js';
 
 import {
@@ -76,9 +76,12 @@ export class Message extends Base {
   /** Client-side nonce for acknowledgment. Null if not provided. */
   readonly nonce: string | null;
 
-  /** Channel where this message was sent. Resolved from cache; null if not cached (e.g. DM channel not in cache). */
-  get channel(): Channel | null {
-    return this.client.channels.get(this.channelId) ?? null;
+  /**
+   * Channel where this message was sent. Resolved from cache; null if not cached.
+   * Messages can only exist in text-based channels (text, DM, announcement), so this always has send() when non-null.
+   */
+  get channel(): (TextChannel | DMChannel | GuildChannel) | null {
+    return (this.client.channels.get(this.channelId) ?? null) as (TextChannel | DMChannel | GuildChannel) | null;
   }
 
   /** Guild where this message was sent. Resolved from cache; null for DMs or if not cached. */

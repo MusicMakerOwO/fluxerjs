@@ -38,7 +38,7 @@ export class ChannelManager extends Collection<string, Channel | GuildChannel> {
    * @throws FluxerError with CHANNEL_NOT_FOUND if the channel does not exist
    * @example
    * const channel = await client.channels.resolve(message.channelId);
-   * if (channel?.isSendable()) await channel.send('Hello!');
+   * if (channel?.isTextBased()) await channel.send('Hello!');
    */
   async resolve(channelId: string): Promise<Channel> {
     return this.get(channelId) ?? this.fetch(channelId);
@@ -51,7 +51,7 @@ export class ChannelManager extends Collection<string, Channel | GuildChannel> {
    * @throws FluxerError with CHANNEL_NOT_FOUND if the channel does not exist
    * @example
    * const channel = await client.channels.fetch(channelId);
-   * if (channel?.isSendable()) await channel.send('Hello!');
+   * if (channel?.isTextBased()) await channel.send('Hello!');
    */
   async fetch(channelId: string): Promise<Channel> {
     const cached = this.get(channelId);

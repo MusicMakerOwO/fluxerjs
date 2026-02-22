@@ -43,4 +43,13 @@ describe('HTTPError', () => {
     expect(new HTTPError(403, '').isRetryable).toBe(false);
     expect(new HTTPError(404, '').isRetryable).toBe(false);
   });
+
+  it('isRetryable returns false for 599 (upper boundary)', () => {
+    expect(new HTTPError(599, '').isRetryable).toBe(true);
+  });
+
+  it('uses body when present over status hint', () => {
+    const err = new HTTPError(502, 'Custom error body');
+    expect(err.message).toContain('Custom error body');
+  });
 });

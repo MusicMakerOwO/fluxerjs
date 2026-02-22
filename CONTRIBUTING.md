@@ -21,7 +21,17 @@ Thank you for your interest in contributing!
 3. Run tests:
 
    ```bash
+   # Full test suite (unit tests + load tests + smoke tests)
+   pnpm run test:all
+
+   # Unit tests only (faster for iteration)
    pnpm run test
+
+   # With coverage report (opens coverage/index.html)
+   pnpm run test:coverage
+
+   # JSON report (test-results/results.json)
+   pnpm run test:report
    ```
 
 4. Run lint:

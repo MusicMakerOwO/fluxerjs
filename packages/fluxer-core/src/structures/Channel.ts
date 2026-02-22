@@ -15,6 +15,7 @@ import {
   APIInvite,
 } from '@fluxerjs/types';
 import { ChannelType, Routes } from '@fluxerjs/types';
+import { PermissionFlags } from '@fluxerjs/util';
 import { emitDeprecationWarning } from '@fluxerjs/util';
 import { User } from './User.js';
 import { Webhook } from './Webhook.js';
@@ -116,6 +117,16 @@ export abstract class Channel extends Base {
   async sendTyping(): Promise<void> {
     await this.client.rest.post(Routes.channelTyping(this.id), { auth: true });
   }
+
+  /**
+   * Whether the bot can send messages in this channel.
+   * For DMs: always true (when the channel exists).
+   * For guild channels: checks ViewChannel and SendMessages permissions via guild.members.me.
+   */
+  canSendMessage(): boolean {
+    if (this.isDM()) return true;
+    return false;
+  }
 }
 
 export class GuildChannel extends Channel {
@@ -213,6 +224,33 @@ export class GuildChannel extends Channel {
     };
     if (idx >= 0) this.permissionOverwrites[idx] = entry;
     else this.permissionOverwrites.push(entry);
+  }
+
+  /**
+   * Whether the bot can send messages in this channel.
+   * Checks ViewChannel and SendMessages via guild.members.me permissions.
+   * Returns false if guild or bot member not cached.
+   */
+  override canSendMessage(): boolean {
+    const guild = this.client.guilds.get(this.guildId);
+    if (!guild) return false;
+    const me = guild.members.me;
+    if (!me) return false;
+    const perms = me.permissionsIn(this);
+    return perms.has(PermissionFlags.ViewChannel) && perms.has(PermissionFlags.SendMessages);
+  }
+
+  /**
+   * Send a message to this guild channel.
+   * Works for text and announcement channels. Voice/category/link channels will fail at the API.
+   */
+  async send(options: MessageSendOptions): Promise<Message> {
+    const opts = typeof options === 'string' ? { content: options } : options;
+    const body = buildSendBody(options);
+    const files = opts.files?.length ? await resolveMessageFiles(opts.files) : undefined;
+    const postOptions = files?.length ? { body, files } : { body };
+    const data = await this.client.rest.post(Routes.channelMessages(this.id), postOptions);
+    return new Message(this.client, data as APIMessage);
   }
 
   /**

@@ -57,4 +57,18 @@ describe('buildSendBody', () => {
     });
     expect(result.attachments![0].flags).toBe(8);
   });
+
+  it('returns empty result when no content, embeds, or files', () => {
+    const result = buildSendBody({});
+    expect(result).toEqual({});
+  });
+
+  it('handles mixed EmbedBuilder and raw embed', () => {
+    const raw = { title: 'Raw', type: 'rich' as const };
+    const built = new EmbedBuilder().setTitle('Built').setDescription('D');
+    const result = buildSendBody({ embeds: [raw, built] });
+    expect(result.embeds).toHaveLength(2);
+    expect(result.embeds![0]).toBe(raw);
+    expect(result.embeds![1]).toEqual(built.toJSON());
+  });
 });

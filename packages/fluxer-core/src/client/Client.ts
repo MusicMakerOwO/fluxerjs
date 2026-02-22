@@ -154,6 +154,8 @@ export class Client extends EventEmitter {
   /** Timestamp when the client became ready. Null until READY is received. */
   readyAt: Date | null = null;
   private _ws: WebSocketManager | null = null;
+  /** When waitForGuilds, set of guild IDs we're waiting for GUILD_CREATE on. Null when not waiting. */
+  _pendingGuildIds: Set<string> | null = null;
 
   /** @param options - Token, REST config, WebSocket, presence, etc. */
   constructor(public readonly options: ClientOptions = {}) {
@@ -376,7 +378,13 @@ export class Client extends EventEmitter {
         data: { user: APIUser; guilds: Array<APIGuild & { unavailable?: boolean }> };
       }) => {
         this.user = new ClientUser(this, data.user);
+        const waitForGuilds = this.options.waitForGuilds === true;
+        const pending = waitForGuilds ? new Set<string>() : null;
         for (const g of data.guilds ?? []) {
+          if (g.unavailable === true) {
+            if (pending !== null && g.id) pending.add(g.id);
+            continue;
+          }
           const guildData = normalizeGuildPayload(g as unknown);
           if (!guildData) continue;
           const guild = new Guild(this, guildData);
@@ -399,14 +407,38 @@ export class Client extends EventEmitter {
             });
           }
         }
-        this.readyAt = new Date();
-        this.emit(Events.Ready);
+        if (pending !== null && pending.size > 0) {
+          this._pendingGuildIds = pending;
+          return;
+        }
+        this._finalizeReady();
       },
     );
     this._ws.on('error', ({ error }: { error: Error }) => this.emit(Events.Error, error));
     this._ws.on('debug', (msg: string) => this.emit(Events.Debug, msg));
     await this._ws.connect();
     return token;
+  }
+
+  /**
+   * Called when all guilds have been received (or immediately if not waiting).
+   * Sets readyAt, emits Ready, clears pending state.
+   */
+  _finalizeReady(): void {
+    this._pendingGuildIds = null;
+    this.readyAt = new Date();
+    this.emit(Events.Ready);
+  }
+
+  /**
+   * Called by GUILD_CREATE handler when waitForGuilds is enabled.
+   * Removes guild from pending set; when empty, finalizes ready.
+   */
+  _onGuildReceived(guildId: string): void {
+    const pending = this._pendingGuildIds;
+    if (pending === null) return;
+    pending.delete(guildId);
+    if (pending.size === 0) this._finalizeReady();
   }
 
   /** Disconnect from the gateway and clear cached data. */
@@ -418,6 +450,7 @@ export class Client extends EventEmitter {
     this.rest.setToken(null);
     this.user = null;
     this.readyAt = null;
+    this._pendingGuildIds = null;
     this.guilds.clear();
     this.channels.clear();
     this.users.clear();

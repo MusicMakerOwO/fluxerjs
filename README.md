@@ -1,5 +1,11 @@
 # @fluxerjs/core
 
+[![CI](https://github.com/fluxerjs/core/actions/workflows/ci.yml/badge.svg)](https://github.com/fluxerjs/core/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/fluxerjs/core/actions/workflows/codeql.yml/badge.svg)](https://github.com/fluxerjs/core/actions/workflows/codeql.yml)
+[![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/fluxerjs/core?utm_source=oss&utm_medium=github&utm_campaign=fluxerjs%2Fcore&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)](https://coderabbit.ai)
+[![npm version](https://img.shields.io/npm/v/@fluxerjs/core.svg)](https://www.npmjs.com/package/@fluxerjs/core)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+
 SDK for building bots on [Fluxer](https://fluxer.app).
 
 ## Install

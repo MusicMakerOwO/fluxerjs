@@ -26,11 +26,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --ignore-scripts
 
-      - name: Build
-        run: pnpm run build --concurrency=10
-
-      - name: Test
-        run: pnpm run test --concurrency=10
+      - name: Test (all)
+        run: pnpm run test:all
 
       - name: Publish to npm
         run: pnpm run publish:packages

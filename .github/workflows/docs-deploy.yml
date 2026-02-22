@@ -1,20 +1,21 @@
 name: Deploy Docs
 
 on:
-  push:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
     branches: [main]
-    paths:
-      - 'apps/docs/**'
-      - 'packages/**'
-      - 'scripts/**'
-      - 'docs/**'
   workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    # Only run when CI succeeded (not on failure/cancelled)
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - uses: pnpm/action-setup@v4
 
@@ -28,6 +29,9 @@ jobs:
 
       - name: Build docs
         run: pnpm run docs:build
+
+      - name: Test package loads (ESM + CJS)
+        run: pnpm run test:load
 
       - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3

@@ -5,6 +5,7 @@ dist
 .env.*
 !.env.example
 coverage
+test-results
 .turbo
 .DS_Store
 openapi.json

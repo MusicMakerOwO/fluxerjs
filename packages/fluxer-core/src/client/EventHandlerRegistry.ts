@@ -134,6 +134,7 @@ handlers.set('GUILD_CREATE', async (client, d) => {
   if (g.voice_states?.length) {
     client.emit(Events.VoiceStatesSync, { guildId: guild.id, voiceStates: g.voice_states });
   }
+  client._onGuildReceived(guild.id);
 });
 
 handlers.set('GUILD_UPDATE', async (client, d) => {

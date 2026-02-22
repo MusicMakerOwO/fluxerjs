@@ -41,7 +41,7 @@
       },
       {
         "title": "client.channels.fetch() — get channel by ID",
-        "description": "Fetch a channel by ID from the API (or cache). Use channel.isSendable() before sending. For sending when you only have an ID, prefer client.channels.send() which skips the fetch."
+        "description": "Fetch a channel by ID from the API (or cache). Use channel.canSendMessage() or channel.isTextBased() before sending. For sending when you only have an ID, prefer client.channels.send() which skips the fetch."
       },
       {
         "title": "fetch message by id",

@@ -12,14 +12,58 @@ export interface ChangelogEntry {
 export const changelogEntries: ChangelogEntry[] = [
   {
     version: '1.2.2',
-    date: '2026-02-21',
+    date: '2026-02-22',
     sections: [
       {
-        title: '@fluxerjs/voice — node-webcodecs ESM fix',
+        title: '@fluxerjs/voice — LiveKit inbound receive',
+        items: [
+          'LiveKit inbound audio receive APIs for participant subscriptions, audioFrame events, and speaking lifecycle events',
+          'VoiceManager helpers for channel participant subscriptions',
+          'Docs/examples for transcription-oriented usage',
+          'Fixed broken voice changes due to packing',
+        ],
+      },
+      {
+        title: '@fluxerjs/voice — ESM fix',
         items: [
           'Fixed "Dynamic require of path is not supported" when using @fluxerjs/voice in ESM projects',
           'node-webcodecs is now loaded via dynamic import and externalized from the bundle',
         ],
+      },
+      {
+        title: '@fluxerjs/core — Message.channel.send() & Channel.canSendMessage()',
+        items: [
+          'Message.channel — now typed as (TextChannel | DMChannel | GuildChannel) | null so message.channel.send() works (messages only exist in text-based channels)',
+          'Channel.canSendMessage() — returns true for DMs; for guild channels checks ViewChannel and SendMessages via guild.members.me permissions',
+          'GuildChannel.send() — added for guild channels that support messages (e.g. announcement channels); TextChannel and DMChannel already had send',
+        ],
+      },
+      {
+        title: '@fluxerjs/core — Ready & guilds',
+        items: [
+          'ClientOptions.waitForGuilds — when true, delays the Ready event until all guilds from READY (including unavailable stubs) have been received via GUILD_CREATE; opt-in for bots that need full guild cache before handling Ready',
+          'New guide: Wait for All Guilds',
+        ],
+      },
+      {
+        title: '@fluxerjs/core — Channel type guards',
+        items: [
+          'BREAKING: isSendable() renamed to isTextBased() — migrate callers to isTextBased()',
+          'Added isLink(), isDM(), isVoice() type guards on Channel',
+          'LinkChannel.url is now a required field',
+          'Refactored Message.send() and reply() for testability; added check for empty messages',
+        ],
+      },
+      {
+        title: 'Build & tooling',
+        items: [
+          'Added vite build artifacts to gitignore',
+          'Modernized vite config (const, modern syntax)',
+        ],
+      },
+      {
+        title: 'Docs & assets',
+        items: ['Docs improvements', 'Updated favicon', 'RAG generation updates'],
       },
     ],
   },

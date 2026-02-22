@@ -121,6 +121,22 @@ describe('parsePrefixCommand', () => {
     expect(parsePrefixCommand('!', '!')).toBeNull();
     expect(parsePrefixCommand('!  ', '!')).toBeNull();
   });
+
+  it('handles multiple spaces between args', () => {
+    expect(parsePrefixCommand('!cmd   a   b', '!')).toEqual({
+      command: 'cmd',
+      args: ['a', 'b'],
+    });
+  });
+
+  it('lowercases command', () => {
+    expect(parsePrefixCommand('!PING', '!')).toEqual({ command: 'ping', args: [] });
+  });
+
+  it('returns null for null or non-string content', () => {
+    expect(parsePrefixCommand(null as unknown as string, '!')).toBeNull();
+    expect(parsePrefixCommand(123 as unknown as string, '!')).toBeNull();
+  });
 });
 
 describe('parseRoleMention', () => {
@@ -133,6 +149,12 @@ describe('parseRoleMention', () => {
     expect(parseRoleMention('@&123')).toBeNull();
     expect(parseRoleMention('')).toBeNull();
     expect(parseRoleMention('  ')).toBeNull();
+  });
+
+  it('returns null for null or non-string', () => {
+    expect(parseRoleMention(null as unknown as string)).toBeNull();
+    expect(parseRoleMention(undefined as unknown as string)).toBeNull();
+    expect(parseRoleMention(123 as unknown as string)).toBeNull();
   });
 
   it('trims whitespace', () => {
