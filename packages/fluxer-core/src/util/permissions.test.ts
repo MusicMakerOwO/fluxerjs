@@ -48,45 +48,35 @@ describe('computePermissions', () => {
 
   it('applies role deny overwrite', () => {
     const base = SendMessages;
-    const overwrites = [
-      { id: 'role1', type: OverwriteType.Role, allow: '0', deny: '2048' },
-    ];
+    const overwrites = [{ id: 'role1', type: OverwriteType.Role, allow: '0', deny: '2048' }];
     const perms = computePermissions(base, overwrites, ['role1'], 'user1', false);
     expect(hasPermission(perms, SendMessages)).toBe(false);
   });
 
   it('applies role allow overwrite', () => {
     const base = 0n;
-    const overwrites = [
-      { id: 'role1', type: OverwriteType.Role, allow: '2048', deny: '0' },
-    ];
+    const overwrites = [{ id: 'role1', type: OverwriteType.Role, allow: '2048', deny: '0' }];
     const perms = computePermissions(base, overwrites, ['role1'], 'user1', false);
     expect(hasPermission(perms, SendMessages)).toBe(true);
   });
 
   it('applies member overwrite', () => {
     const base = 0n;
-    const overwrites = [
-      { id: 'user1', type: OverwriteType.Member, allow: '2048', deny: '0' },
-    ];
+    const overwrites = [{ id: 'user1', type: OverwriteType.Member, allow: '2048', deny: '0' }];
     const perms = computePermissions(base, overwrites, [], 'user1', false);
     expect(hasPermission(perms, SendMessages)).toBe(true);
   });
 
   it('member overwrite can deny base permission', () => {
     const base = SendMessages;
-    const overwrites = [
-      { id: 'user1', type: OverwriteType.Member, allow: '0', deny: '2048' },
-    ];
+    const overwrites = [{ id: 'user1', type: OverwriteType.Member, allow: '0', deny: '2048' }];
     const perms = computePermissions(base, overwrites, [], 'user1', false);
     expect(hasPermission(perms, SendMessages)).toBe(false);
   });
 
   it('ignores overwrites that do not apply to member', () => {
     const base = SendMessages;
-    const overwrites = [
-      { id: 'role99', type: OverwriteType.Role, allow: '0', deny: '2048' },
-    ];
+    const overwrites = [{ id: 'role99', type: OverwriteType.Role, allow: '0', deny: '2048' }];
     const perms = computePermissions(base, overwrites, ['role1'], 'user1', false);
     expect(hasPermission(perms, SendMessages)).toBe(true);
   });

@@ -14,9 +14,7 @@ describe('UserFlagsBitField', () => {
   });
 
   it('add and remove BugHunter', () => {
-    const bf = new UserFlagsBitField()
-      .add(UserFlagsBits.BugHunter)
-      .add(UserFlagsBits.Partner);
+    const bf = new UserFlagsBitField().add(UserFlagsBits.BugHunter).add(UserFlagsBits.Partner);
     expect(bf.has(UserFlagsBits.BugHunter)).toBe(true);
     bf.remove(UserFlagsBits.BugHunter);
     expect(bf.has(UserFlagsBits.BugHunter)).toBe(false);
@@ -29,18 +27,13 @@ describe('UserFlagsBitField', () => {
   });
 
   it('toArray returns enabled flag names', () => {
-    const bf = new UserFlagsBitField([
-      UserFlagsBits.Staff,
-      UserFlagsBits.Partner,
-    ]);
+    const bf = new UserFlagsBitField([UserFlagsBits.Staff, UserFlagsBits.Partner]);
     const arr = bf.toArray();
     expect(arr).toContain('Staff');
     expect(arr).toContain('Partner');
   });
 
   it('throws for invalid flag', () => {
-    expect(() => new UserFlagsBitField('InvalidFlag' as 'Staff')).toThrow(
-      RangeError,
-    );
+    expect(() => new UserFlagsBitField('InvalidFlag' as 'Staff')).toThrow(RangeError);
   });
 });

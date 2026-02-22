@@ -1,8 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-  MessageFlagsBitField,
-  MessageFlagsBits,
-} from './MessageFlagsBitField.js';
+import { MessageFlagsBitField, MessageFlagsBits } from './MessageFlagsBitField.js';
 
 describe('MessageFlagsBitField', () => {
   it('creates with default 0', () => {

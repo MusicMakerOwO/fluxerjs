@@ -197,7 +197,10 @@ describe('Collection', () => {
   });
 
   it('random(amount) when amount exceeds size returns all', () => {
-    const coll = new Collection<string, number>([['a', 1], ['b', 2]]);
+    const coll = new Collection<string, number>([
+      ['a', 1],
+      ['b', 2],
+    ]);
     const result = coll.random(5);
     expect(result).toHaveLength(2);
   });

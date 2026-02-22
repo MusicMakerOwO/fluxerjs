@@ -1292,7 +1292,8 @@ voiceManager.leave(guildId);`,
       },
       {
         title: 'Usage',
-        description: 'Pass waitForGuilds: true in ClientOptions. Ready will emit only after all guilds from READY (including those marked unavailable) have been received via GUILD_CREATE.',
+        description:
+          'Pass waitForGuilds: true in ClientOptions. Ready will emit only after all guilds from READY (including those marked unavailable) have been received via GUILD_CREATE.',
         code: `import { Client, Events } from '@fluxerjs/core';
 
 const client = new Client({

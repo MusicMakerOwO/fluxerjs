@@ -67,9 +67,7 @@ describe('resolveTenorToImageUrl', () => {
         return Promise.reject(new Error('Unexpected'));
       }),
     );
-    const result = await resolveTenorToImageUrl(
-      'https://tenor.com/view/test-123',
-    );
+    const result = await resolveTenorToImageUrl('https://tenor.com/view/test-123');
     expect(result).not.toBeNull();
     expect(result!.url).toContain('media.tenor.com');
     expect(result!.url).toContain('.gif');

@@ -21,9 +21,7 @@ describe('buildFormData', () => {
 
   it('uses custom filename when provided', () => {
     const payload = {};
-    const files = [
-      { name: 'a', data: new Uint8Array(), filename: 'custom.png' },
-    ];
+    const files = [{ name: 'a', data: new Uint8Array(), filename: 'custom.png' }];
     const form = buildFormData(payload, files);
     const parsed = JSON.parse(form.get('payload_json') as string);
     expect(parsed.attachments).toEqual([{ id: 0, filename: 'custom.png' }]);

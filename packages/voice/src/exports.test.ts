@@ -1,10 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-  VoiceManager,
-  VoiceConnection,
-  LiveKitRtcConnection,
-  getVoiceManager,
-} from './index.js';
+import { VoiceManager, VoiceConnection, LiveKitRtcConnection, getVoiceManager } from './index.js';
 
 describe('@fluxerjs/voice exports', () => {
   it('exports VoiceManager class', () => {

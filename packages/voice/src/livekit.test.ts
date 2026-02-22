@@ -1,8 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-  isLiveKitEndpoint,
-  buildLiveKitUrlForRtcSdk,
-} from './livekit.js';
+import { isLiveKitEndpoint, buildLiveKitUrlForRtcSdk } from './livekit.js';
 
 describe('isLiveKitEndpoint', () => {
   it('returns false for null, undefined, empty', () => {
@@ -12,9 +9,7 @@ describe('isLiveKitEndpoint', () => {
   });
 
   it('returns true when access_token in URL', () => {
-    expect(
-      isLiveKitEndpoint('https://ferret.fluxer.media?access_token=abc'),
-    ).toBe(true);
+    expect(isLiveKitEndpoint('https://ferret.fluxer.media?access_token=abc')).toBe(true);
   });
 
   it('returns true when /rtc and query params', () => {

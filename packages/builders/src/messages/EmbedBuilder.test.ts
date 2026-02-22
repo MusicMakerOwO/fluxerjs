@@ -129,9 +129,9 @@ describe('EmbedBuilder', () => {
 
     it('setImage throws for invalid media URL', () => {
       const embed = new EmbedBuilder();
-      expect(() =>
-        embed.setImage({ url: 'invalid', width: 100 }),
-      ).toThrow('Invalid embed media URL');
+      expect(() => embed.setImage({ url: 'invalid', width: 100 })).toThrow(
+        'Invalid embed media URL',
+      );
     });
 
     it('toJSON throws when total length exceeds 6000', () => {
@@ -210,10 +210,7 @@ describe('EmbedBuilder', () => {
     it('addFields adds multiple', () => {
       const embed = new EmbedBuilder()
         .setTitle('T')
-        .addFields(
-          { name: 'A', value: '1' },
-          { name: 'B', value: '2', inline: true },
-        );
+        .addFields({ name: 'A', value: '1' }, { name: 'B', value: '2', inline: true });
       const json = embed.toJSON();
       expect(json.fields).toHaveLength(2);
       expect(json.fields![0]).toEqual({ name: 'A', value: '1', inline: undefined });
