@@ -38,7 +38,7 @@ export interface MessageEditOptions {
 
 export type MessagePayload = {
   files?: ResolvedMessageFile[];
-  body: SendBodyResult & { referenced_message?: APIMessageReference };
+  body: SendBodyResult & { message_reference?: APIMessageReference };
 };
 
 /** Re-export for convenience. */
@@ -196,7 +196,7 @@ export class Message extends Base {
     const base = buildSendBody(content);
     const files = content.files?.length ? await resolveMessageFiles(content.files) : undefined;
     return referenced_message
-      ? { files, body: { ...base, referenced_message } }
+      ? { files, body: { ...base, message_reference: referenced_message } }
       : { files, body: { ...base } };
   }
 

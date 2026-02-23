@@ -841,6 +841,13 @@ commands.set('dmuser', {
   },
 });
 
+commands.set('replytest', {
+  description: 'Test message.reply() - bot replies to your message (shows as reply thread)',
+  async execute(message) {
+    await message.reply('This message is a reply to yours! You should see it linked/threaded.');
+  },
+});
+
 commands.set('react', {
   description: 'Reply with a message and add reactions',
   async execute(message) {

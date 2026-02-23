@@ -11,6 +11,20 @@ export interface ChangelogEntry {
 
 export const changelogEntries: ChangelogEntry[] = [
   {
+    version: '1.2.3',
+    date: '2026-02-23',
+    sections: [
+      {
+        title: '@fluxerjs/core — Message.reply() fix',
+        items: [
+          'Fixed message.reply() not creating actual replies — SDK now sends message_reference (not referenced_message) in the request body per Discord/Fluxer API spec',
+          'Added !replytest command to ping-bot example for verification',
+          'Added structure tests (Message, User, GuildMember, Guild, Invite) including regression test for reply payload',
+        ],
+      },
+    ],
+  },
+  {
     version: '1.2.2',
     date: '2026-02-22',
     sections: [
