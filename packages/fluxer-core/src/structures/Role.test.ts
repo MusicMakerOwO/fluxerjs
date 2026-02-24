@@ -1,10 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { Role } from './Role.js';
+import { Client, Role } from '../';
 import { PermissionFlags } from '@fluxerjs/util';
 
-/** Minimal client mock — Role.has() only uses role.permissions, not client. */
 function createMockClient() {
-  return {} as Parameters<typeof Role>[0];
+  return {} as Client;
 }
 
 function createRole(permissions: string, overrides: Partial<{ id: string; name: string }> = {}) {
