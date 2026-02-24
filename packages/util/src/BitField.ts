@@ -10,16 +10,15 @@ export type BitFieldResolvable<S extends string> =
   | bigint
   | number
   | BitField<S>
-  | (S | number | BitField<S>)[];
+  | (S | number | bigint | BitField<S>)[];
 
 export class BitField<S extends string> {
-  static Flags: Record<string, number> = {};
+  static Flags: Record<string, bigint> = {};
   defaultBit = 0;
-  bitfield: number;
+  bitfield: bigint;
 
   constructor(bits: BitFieldResolvable<S> = 0) {
-    const Ctor = this.constructor as typeof BitField;
-    this.bitfield = Ctor.resolve(bits);
+    this.bitfield = (this.constructor as typeof BitField).resolve(bits);
   }
 
   get [Symbol.toStringTag](): string {
@@ -36,12 +35,13 @@ export class BitField<S extends string> {
   }
 
   has(bit: BitFieldResolvable<S>): boolean {
+    console.log(bit);
     bit = (this.constructor as typeof BitField).resolve(bit);
-    return (this.bitfield & bit) === bit;
+    return (this.bitfield & bit) !== 0n;
   }
 
   add(...bits: BitFieldResolvable<S>[]): this {
-    let total = 0;
+    let total = 0n;
     for (const bit of bits) {
       total |= (this.constructor as typeof BitField).resolve(bit);
     }
@@ -50,7 +50,7 @@ export class BitField<S extends string> {
   }
 
   remove(...bits: BitFieldResolvable<S>[]): this {
-    let total = 0;
+    let total = 0n;
     for (const bit of bits) {
       total |= (this.constructor as typeof BitField).resolve(bit);
     }
@@ -59,27 +59,27 @@ export class BitField<S extends string> {
   }
 
   serialize(): Record<S, boolean> {
-    const Flags = (this.constructor as typeof BitField).Flags as Record<S, number>;
+    const Flags = (this.constructor as typeof BitField).Flags as Record<S, bigint>;
     const serialized: Record<string, boolean> = {};
-    for (const [key, value] of Object.entries(Flags) as [S, number][]) {
+    for (const [key, value] of Object.entries(Flags) as [S, bigint][]) {
       serialized[key as string] = (this.bitfield & value) === value;
     }
     return serialized as Record<S, boolean>;
   }
 
   toArray(): S[] {
-    const Flags = (this.constructor as typeof BitField).Flags as Record<S, number>;
-    return (Object.entries(Flags) as [S, number][])
+    const Flags = (this.constructor as typeof BitField).Flags as Record<S, bigint>;
+    return (Object.entries(Flags) as [S, bigint][])
       .filter(([, value]) => (this.bitfield & value) === value)
       .map(([key]) => key);
   }
 
-  toJSON(): number {
-    return this.bitfield;
+  toJSON() {
+    return this.bitfield.toString();
   }
 
-  valueOf(): number {
-    return this.bitfield;
+  valueOf() {
+    return this.bitfield.toString();
   }
 
   equals(bitfield: BitField<S>): boolean {
